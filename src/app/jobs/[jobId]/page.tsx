@@ -1,5 +1,7 @@
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { prisma } from '@/lib/db'
+import { Button } from '@/components/ui/button'
 import { DrawingList } from '@/components/drawings/drawing-list'
 import { UploadDrawingForm } from '@/components/drawings/upload-drawing-form'
 import { JobStatusBadge } from '@/components/jobs/job-status-badge'
@@ -24,7 +26,12 @@ export default async function JobDetailPage({ params }: Params) {
             {job.client} · {job.durationWeeks} weeks · starts {new Date(job.startDate).toLocaleDateString()}
           </p>
         </div>
-        <JobStatusBadge status={job.status} />
+        <div className="flex items-center gap-3">
+          <Button render={<Link href={`/jobs/${job.id}/estimate`} />}>
+            View Estimate
+          </Button>
+          <JobStatusBadge status={job.status} />
+        </div>
       </div>
 
       <section className="space-y-4">
