@@ -25,7 +25,11 @@ const { mockPrisma, PrismaClientKnownRequestError } = vi.hoisted(() => {
 })
 
 vi.mock('@/lib/db', () => ({ prisma: mockPrisma }))
-vi.mock('@prisma/client/runtime/library', () => ({ PrismaClientKnownRequestError }))
+vi.mock('@prisma/client', () => ({
+  Prisma: {
+    PrismaClientKnownRequestError,
+  },
+}))
 
 const mockPhase = {
   id: 'phase-1',
@@ -151,6 +155,8 @@ describe('PATCH /api/jobs/[jobId]/phases/[phaseId]', () => {
       { params: Promise.resolve({ jobId: 'job-1', phaseId: 'phase-1' }) },
     )
     expect(res.status).toBe(200)
+    const body = await res.json()
+    expect(body.endDate).toBeDefined()
   })
 
   it('returns 404 for unknown phase (P2025)', async () => {
