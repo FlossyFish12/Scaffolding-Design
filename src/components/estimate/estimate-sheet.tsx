@@ -107,7 +107,7 @@ export default function EstimateSheet({ jobId, title, structures }: Props): Reac
         }, 0)
 
         return (
-          <div key={structure.structureId} className="space-y-4">
+          <div key={structure.drawingId} className="space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold" style={{ color: 'var(--navy)' }}>
                 {structure.structureName}{' '}

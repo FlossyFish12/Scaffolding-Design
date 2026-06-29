@@ -66,20 +66,18 @@ export async function POST(req: Request, { params }: Params) {
         .map((i) => `${i.category}:${i.description}`),
     )
 
-    await prisma.estimateItem.deleteMany({ where: { zoneId, overridden: false } })
-
     const toCreate = newItems.filter(
       (i) => !overriddenKeys.has(`${i.category}:${i.description}`),
     )
-    await prisma.estimateItem.createMany({
-      data: toCreate.map((i) => ({ ...i, zoneId })),
-    })
 
-    await prisma.zone.update({ where: { id: zoneId }, data: { templateId: template.id } })
-
-    const allItems = await prisma.estimateItem.findMany({
-      where: { zoneId },
-      orderBy: [{ category: 'asc' }, { description: 'asc' }],
+    const allItems = await prisma.$transaction(async (tx) => {
+      await tx.estimateItem.deleteMany({ where: { zoneId, overridden: false } })
+      await tx.estimateItem.createMany({ data: toCreate.map((i) => ({ ...i, zoneId })) })
+      await tx.zone.update({ where: { id: zoneId }, data: { templateId: template.id } })
+      return tx.estimateItem.findMany({
+        where: { zoneId },
+        orderBy: [{ category: 'asc' }, { description: 'asc' }],
+      })
     })
     return NextResponse.json(allItems)
   } catch {

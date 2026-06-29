@@ -1,10 +1,19 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
-const mockPrisma = vi.hoisted(() => ({
-  zone: { findUnique: vi.fn(), update: vi.fn() },
-  template: { findUnique: vi.fn(), findFirst: vi.fn() },
-  estimateItem: { deleteMany: vi.fn(), createMany: vi.fn(), findMany: vi.fn() },
-}))
+const mockPrisma = vi.hoisted(() => {
+  const estimateItem = { deleteMany: vi.fn(), createMany: vi.fn(), findMany: vi.fn() }
+  const zone = { findUnique: vi.fn(), update: vi.fn() }
+  const template = { findUnique: vi.fn(), findFirst: vi.fn() }
+
+  return {
+    zone,
+    template,
+    estimateItem,
+    $transaction: vi.fn(async (callback) => {
+      return callback({ estimateItem, zone, template })
+    }),
+  }
+})
 vi.mock('@/lib/db', () => ({ prisma: mockPrisma }))
 vi.mock('@/lib/estimate-engine', () => ({
   generateEstimateItems: vi.fn(() => [
