@@ -15,7 +15,7 @@ export default async function JobDetailPage({ params }: Params) {
   if (!job) notFound()
 
   return (
-    <div className="space-y-8">
+    <div className="p-6 overflow-auto h-full space-y-8">
       <div className="flex items-start justify-between">
         <div>
           <p className="text-sm text-muted-foreground font-mono">{job.projectNumber}</p>
