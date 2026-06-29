@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
 import { suggestScaffoldType } from '@/lib/scaffold-rules'
@@ -15,11 +15,19 @@ export type ZoneFormValues = {
   templateId: string | null
 }
 
+export type TemplateSummary = {
+  id: string
+  name: string
+  scaffoldType: string
+}
+
 type Props = {
   mode: 'new' | 'edit'
   initialValues?: Partial<ZoneFormValues>
+  templates?: TemplateSummary[]
   onSave: (values: ZoneFormValues) => Promise<void>
   onDelete?: () => Promise<void>
+  onGenerateEstimate?: (templateId: string | undefined) => Promise<void>
   onClose: () => void
 }
 
@@ -30,8 +38,10 @@ const LABEL_CLASS = 'block text-xs font-medium text-muted-foreground mb-1'
 export default function ZonePanel({
   mode,
   initialValues,
+  templates = [],
   onSave,
   onDelete,
+  onGenerateEstimate,
   onClose,
 }: Props): React.JSX.Element {
   const {
@@ -54,8 +64,12 @@ export default function ZonePanel({
     },
   })
 
+  const [isGenerating, setIsGenerating] = useState(false)
+  const [generateStatus, setGenerateStatus] = useState<'idle' | 'success' | 'error'>('idle')
+
   const accessType = watch('accessType')
   const loadingClass = watch('loadingClass')
+  const templateId = watch('templateId')
 
   // Auto-suggest scaffold type when access type or loading class changes.
   // Skip the initial render so we don't overwrite the stored value in edit mode.
@@ -68,6 +82,22 @@ export default function ZonePanel({
   async function handleDelete() {
     if (!onDelete) return
     await onDelete()
+  }
+
+  async function handleGenerateEstimate() {
+    if (!onGenerateEstimate) return
+    setIsGenerating(true)
+    setGenerateStatus('idle')
+    try {
+      await onGenerateEstimate(templateId ?? undefined)
+      setGenerateStatus('success')
+      setTimeout(() => setGenerateStatus('idle'), 2000)
+    } catch {
+      setGenerateStatus('error')
+      setTimeout(() => setGenerateStatus('idle'), 3000)
+    } finally {
+      setIsGenerating(false)
+    }
   }
 
   return (
@@ -181,6 +211,25 @@ export default function ZonePanel({
           </select>
         </div>
 
+        {/* Template selector (optional) */}
+        {templates.length > 0 && (
+          <div>
+            <label htmlFor="zone-templateId" className={LABEL_CLASS}>
+              Template <span className="font-normal text-muted-foreground">(optional)</span>
+            </label>
+            <select
+              id="zone-templateId"
+              {...register('templateId')}
+              className={FIELD_CLASS}
+            >
+              <option value="">Auto-match</option>
+              {templates.map((t) => (
+                <option key={t.id} value={t.id}>{t.name}</option>
+              ))}
+            </select>
+          </div>
+        )}
+
         {/* Footer: Save + optional Delete */}
         <div className="flex gap-2 mt-auto pt-2">
           <Button type="submit" disabled={isSubmitting} className="flex-1">
@@ -197,6 +246,27 @@ export default function ZonePanel({
             </Button>
           )}
         </div>
+
+        {/* Generate Estimate — only in edit mode */}
+        {mode === 'edit' && onGenerateEstimate && (
+          <div className="pt-1 border-t border-[var(--border)]">
+            <Button
+              type="button"
+              onClick={handleGenerateEstimate}
+              disabled={isGenerating}
+              className="w-full"
+              style={{ background: 'var(--green)', color: '#fff' }}
+            >
+              {isGenerating
+                ? 'Generating…'
+                : generateStatus === 'success'
+                ? '✓ Estimate Generated'
+                : generateStatus === 'error'
+                ? '✗ Generation Failed'
+                : 'Generate Estimate'}
+            </Button>
+          </div>
+        )}
       </form>
     </aside>
   )

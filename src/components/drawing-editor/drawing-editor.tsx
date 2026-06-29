@@ -1,8 +1,9 @@
 'use client'
+import Link from 'next/link'
 import dynamic from 'next/dynamic'
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
-import ZonePanel, { ZoneFormValues } from './zone-panel'
+import ZonePanel, { ZoneFormValues, TemplateSummary } from './zone-panel'
 import type { CanvasRect, ZoneOverlay } from './canvas-layer'
 
 const PdfViewer = dynamic(() => import('./pdf-viewer'), { ssr: false })
@@ -47,6 +48,14 @@ export default function DrawingEditor({ drawing, initialZones }: Props) {
   const [renderHeight, setRenderHeight] = useState(0)
   const [selectedZoneId, setSelectedZoneId] = useState<string | null>(null)
   const [draftRect, setDraftRect] = useState<CanvasRect | null>(null)
+  const [templates, setTemplates] = useState<TemplateSummary[]>([])
+
+  useEffect(() => {
+    fetch('/api/templates')
+      .then((r) => r.json())
+      .then((data: TemplateSummary[]) => setTemplates(data))
+      .catch(() => {})
+  }, [])
 
   const handlePageCount = useCallback((n: number) => setTotalPages(n), [])
   const handleRenderSize = useCallback((w: number, h: number) => {
@@ -80,15 +89,10 @@ export default function DrawingEditor({ drawing, initialZones }: Props) {
 
   async function handleSave(values: ZoneFormValues) {
     if (draftRect) {
-      // Create new zone
       const res = await fetch(`/api/jobs/${drawing.jobId}/drawings/${drawing.id}/zones`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          pageNumber: currentPage,
-          canvasData: draftRect,
-          ...values,
-        }),
+        body: JSON.stringify({ pageNumber: currentPage, canvasData: draftRect, ...values }),
       })
       if (!res.ok) throw new Error('Failed to save zone')
       const newZone: Zone = await res.json()
@@ -96,14 +100,9 @@ export default function DrawingEditor({ drawing, initialZones }: Props) {
       setDraftRect(null)
       setSelectedZoneId(newZone.id)
     } else if (selectedZone) {
-      // Update existing zone
       const res = await fetch(
         `/api/jobs/${drawing.jobId}/drawings/${drawing.id}/zones/${selectedZone.id}`,
-        {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(values),
-        },
+        { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(values) },
       )
       if (!res.ok) throw new Error('Failed to update zone')
       const updated: Zone = await res.json()
@@ -122,6 +121,19 @@ export default function DrawingEditor({ drawing, initialZones }: Props) {
     setSelectedZoneId(null)
   }
 
+  async function handleGenerateEstimate(templateId: string | undefined) {
+    if (!selectedZone) return
+    const res = await fetch(
+      `/api/jobs/${drawing.jobId}/drawings/${drawing.id}/zones/${selectedZone.id}/estimate`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(templateId ? { templateId } : {}),
+      },
+    )
+    if (!res.ok) throw new Error('Failed to generate estimate')
+  }
+
   const panelInitialValues: Partial<ZoneFormValues> | undefined = selectedZone
     ? {
         label: selectedZone.label,
@@ -138,9 +150,7 @@ export default function DrawingEditor({ drawing, initialZones }: Props) {
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
-      <div
-        className="flex items-center justify-between px-4 py-2 border-b border-border flex-shrink-0 bg-card"
-      >
+      <div className="flex items-center justify-between px-4 py-2 border-b border-border flex-shrink-0 bg-card">
         <div>
           <span className="text-sm font-medium">{drawing.filename}</span>
           <span className="ml-2 text-xs text-muted-foreground">
@@ -148,6 +158,12 @@ export default function DrawingEditor({ drawing, initialZones }: Props) {
           </span>
         </div>
         <div className="flex items-center gap-3">
+          <Button
+            render={<Link href={`/jobs/${drawing.jobId}/estimate`} />}
+            style={{ fontSize: 12, padding: '2px 10px', background: 'var(--green)', color: '#fff' }}
+          >
+            View Estimate
+          </Button>
           <span className="text-xs text-muted-foreground">
             {pageZones.length} zone{pageZones.length !== 1 ? 's' : ''} on page
           </span>
@@ -155,6 +171,7 @@ export default function DrawingEditor({ drawing, initialZones }: Props) {
           <div className="flex items-center gap-1">
             <Button
               type="button"
+              aria-label="Previous page"
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
               disabled={currentPage <= 1}
               style={{ padding: '2px 8px', fontSize: 12 }}
@@ -166,6 +183,7 @@ export default function DrawingEditor({ drawing, initialZones }: Props) {
             </span>
             <Button
               type="button"
+              aria-label="Next page"
               onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
               disabled={currentPage >= totalPages}
               style={{ padding: '2px 8px', fontSize: 12 }}
@@ -205,8 +223,10 @@ export default function DrawingEditor({ drawing, initialZones }: Props) {
             key={selectedZoneId ?? 'new'}
             mode={panelMode}
             initialValues={panelInitialValues}
+            templates={templates}
             onSave={handleSave}
             onDelete={panelMode === 'edit' ? handleDelete : undefined}
+            onGenerateEstimate={panelMode === 'edit' ? handleGenerateEstimate : undefined}
             onClose={closePanel}
           />
         )}
