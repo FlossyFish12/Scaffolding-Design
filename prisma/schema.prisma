@@ -1,13 +1,140 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
+}
+
+enum JobStatus {
+  draft
+  estimated
+  approved
+}
+
+enum AccessType {
+  ground
+  elevated
+  confined
+  overhead
+}
+
+enum LoadingClass {
+  light
+  medium
+  heavy
+}
+
+enum ScaffoldType {
+  independent
+  birdcage
+  putlog
+  suspended
+  cantilever
+}
+
+enum EstimateCategory {
+  material
+  labour
+}
+
+enum PhaseType {
+  erect
+  modify
+  dismantle
+}
+
+model Job {
+  id            String    @id @default(cuid())
+  projectNumber String
+  title         String
+  client        String
+  status        JobStatus @default(draft)
+  startDate     DateTime
+  durationWeeks Int
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  drawings      Drawing[]
+  phases        Phase[]
+}
+
+model Drawing {
+  id            String   @id @default(cuid())
+  jobId         String
+  structureId   String
+  structureName String
+  filename      String
+  blobUrl       String
+  pageCount     Int      @default(1)
+  createdAt     DateTime @default(now())
+  job           Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  zones         Zone[]
+}
+
+model Zone {
+  id            String       @id @default(cuid())
+  drawingId     String
+  pageNumber    Int          @default(1)
+  label         String
+  canvasData    Json
+  accessType    AccessType
+  loadingClass  LoadingClass
+  heightM       Float
+  perimeterM    Float
+  areaM2        Float
+  scaffoldType  ScaffoldType
+  templateId    String?
+  createdAt     DateTime     @default(now())
+  drawing       Drawing      @relation(fields: [drawingId], references: [id], onDelete: Cascade)
+  template      Template?    @relation(fields: [templateId], references: [id])
+  estimateItems EstimateItem[]
+}
+
+model EstimateItem {
+  id           String           @id @default(cuid())
+  zoneId       String
+  category     EstimateCategory
+  description  String
+  quantity     Float
+  unit         String
+  unitManhours Float            @default(0)
+  overridden   Boolean          @default(false)
+  zone         Zone             @relation(fields: [zoneId], references: [id], onDelete: Cascade)
+}
+
+model Template {
+  id             String             @id @default(cuid())
+  name           String
+  scaffoldType   ScaffoldType
+  accessTypes    AccessType[]
+  loadingClasses LoadingClass[]
+  lineItems      TemplateLineItem[]
+  zones          Zone[]
+}
+
+model TemplateLineItem {
+  id          String           @id @default(cuid())
+  templateId  String
+  category    EstimateCategory
+  description String
+  formula     String
+  unit        String
+  template    Template         @relation(fields: [templateId], references: [id], onDelete: Cascade)
+}
+
+model Phase {
+  id            String    @id @default(cuid())
+  jobId         String
+  type          PhaseType
+  structureId   String
+  startDate     DateTime
+  endDate       DateTime
+  manhoursTotal Float     @default(0)
+  job           Job       @relation(fields: [jobId], references: [id], onDelete: Cascade)
+}
+
+model ResourcePool {
+  id                String   @id @default(cuid())
+  weekStartDate     DateTime @unique
+  availableManhours Float
 }
