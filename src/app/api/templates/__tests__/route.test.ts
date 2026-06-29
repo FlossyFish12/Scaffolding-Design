@@ -23,7 +23,7 @@ import { GET as getTemplate, PATCH as patchTemplate, DELETE as deleteTemplate } 
 import { POST as postLineItem } from '../[templateId]/line-items/route'
 import { PATCH as patchLineItem, DELETE as deleteLineItem } from '../[templateId]/line-items/[lineItemId]/route'
 
-const mockPrisma = prisma as any
+const mockPrisma = prisma
 
 const makeReq = (body?: unknown) =>
   new Request('http://localhost', {
@@ -163,6 +163,16 @@ describe('PATCH /api/templates/[templateId]/line-items/[lineItemId]', () => {
     const res = await patchLineItem(req, liParams())
     expect(res.status).toBe(200)
   })
+
+  it('returns 404 for unknown line item (P2025)', async () => {
+    const { Prisma } = await import('@prisma/client')
+    mockPrisma.templateLineItem.update.mockRejectedValue(
+      Object.assign(new Prisma.PrismaClientKnownRequestError('', { code: 'P2025', clientVersion: '' }), {})
+    )
+    const req = makeReq({ formula: 'area_m2 * 0.2' })
+    const res = await patchLineItem(req, liParams('tpl-1', 'unknown'))
+    expect(res.status).toBe(404)
+  })
 })
 
 describe('DELETE /api/templates/[templateId]/line-items/[lineItemId]', () => {
@@ -170,5 +180,14 @@ describe('DELETE /api/templates/[templateId]/line-items/[lineItemId]', () => {
     mockPrisma.templateLineItem.delete.mockResolvedValue({})
     const res = await deleteLineItem(new Request('http://localhost'), liParams())
     expect(res.status).toBe(204)
+  })
+
+  it('returns 404 for unknown line item (P2025)', async () => {
+    const { Prisma } = await import('@prisma/client')
+    mockPrisma.templateLineItem.delete.mockRejectedValue(
+      Object.assign(new Prisma.PrismaClientKnownRequestError('', { code: 'P2025', clientVersion: '' }), {})
+    )
+    const res = await deleteLineItem(new Request('http://localhost'), liParams('tpl-1', 'unknown'))
+    expect(res.status).toBe(404)
   })
 })
