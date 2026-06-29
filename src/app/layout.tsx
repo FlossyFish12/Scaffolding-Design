@@ -14,8 +14,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Nav />
-        <main className="container mx-auto px-4 py-6">{children}</main>
+        <div className="flex flex-col lg:flex-row h-dvh overflow-hidden" style={{ background: "var(--bg, var(--background))" }}>
+          <Nav />
+          <main className="flex-1 overflow-y-auto p-6">{children}</main>
+        </div>
       </body>
     </html>
   )
