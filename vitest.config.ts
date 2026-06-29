@@ -10,6 +10,9 @@ export default defineConfig({
     setupFiles: ['./src/test/setup.ts'],
   },
   resolve: {
-    alias: { '@': resolve(__dirname, './src') },
+    alias: {
+      '@': resolve(__dirname, './src'),
+      '@prisma/client/runtime/library': resolve(__dirname, './src/test/prisma-mock.ts'),
+    },
   },
 })
