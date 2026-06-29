@@ -6,7 +6,7 @@ import { Nav } from '@/components/nav'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Scaffolding Platform',
+  title: 'NMDC Energy | Scaffolding',
   description: 'Internal scaffolding design and estimation tool',
 }
 

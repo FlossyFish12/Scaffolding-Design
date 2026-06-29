@@ -49,38 +49,51 @@
 }
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
+  /* ── NMDC Energy raw brand tokens ── */
+  --green:       #00B451;
+  --green-dark:  #008C3E;
+  --green-light: #E8F9EF;
+  --navy:        #0D1B2A;
+  --navy-mid:    #1A2F44;
+  --navy-soft:   #253B52;
+  --text-2:      #4A637A;
+  --text-3:      #8AA2B8;
+  --border-soft: #EEF1F6;
+
+  /* ── shadcn token overrides → NMDC palette ── */
+  --background: #F2F5F9;
+  --foreground: #0D1B2A;
+  --card: #FFFFFF;
+  --card-foreground: #0D1B2A;
+  --popover: #FFFFFF;
+  --popover-foreground: #0D1B2A;
+  --primary: #00B451;
+  --primary-foreground: #FFFFFF;
+  --secondary: #EEF1F6;
+  --secondary-foreground: #0D1B2A;
+  --muted: #EEF1F6;
+  --muted-foreground: #4A637A;
+  --accent: #E8F9EF;
+  --accent-foreground: #008C3E;
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --border: #DDE3ED;
+  --input: #DDE3ED;
+  --ring: #00B451;
+  --chart-1: #00B451;
+  --chart-2: #1A2F44;
+  --chart-3: #4A637A;
+  --chart-4: #8AA2B8;
+  --chart-5: #E8F9EF;
+  --radius: 0.5rem;
+  /* sidebar = navy dark, matches Transport portal */
+  --sidebar: #0D1B2A;
+  --sidebar-foreground: #FFFFFF;
+  --sidebar-primary: #00B451;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: rgba(255,255,255,0.06);
+  --sidebar-accent-foreground: rgba(255,255,255,0.85);
+  --sidebar-border: rgba(255,255,255,0.07);
+  --sidebar-ring: #00B451;
 }
 
 .dark {
