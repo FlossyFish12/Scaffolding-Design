@@ -4,14 +4,14 @@
 
 **Goal:** Bootstrap the Next.js application, set up the full database schema, and deliver a working job management UI — create jobs, upload PDF drawings, and view job detail.
 
-**Architecture:** Next.js 15 App Router with Prisma ORM + PostgreSQL (Neon via Vercel Marketplace) + Vercel Blob for PDF storage. Pages are React Server Components by default; interactive forms are `'use client'` components that POST to API routes.
+**Architecture:** Next.js 16 App Router with Prisma ORM + PostgreSQL (Neon via Vercel Marketplace) + Vercel Blob for PDF storage. Pages are React Server Components by default; interactive forms are `'use client'` components that POST to API routes.
 
-**Tech Stack:** Next.js 15, TypeScript, Tailwind CSS, shadcn/ui, Prisma, Neon PostgreSQL, Vercel Blob, Zod, Vitest, @testing-library/react
+**Tech Stack:** Next.js 16, TypeScript, Tailwind CSS, shadcn/ui, Prisma, Neon PostgreSQL, Vercel Blob, Zod, Vitest, @testing-library/react
 
 ## Global Constraints
 
 - Node.js 24 LTS
-- Next.js 15 App Router only — no Pages Router
+- Next.js 16 App Router only — no Pages Router
 - TypeScript strict mode throughout
 - All API routes return `NextResponse.json()`
 - Database: Neon PostgreSQL via Vercel Marketplace — `DATABASE_URL` env var
