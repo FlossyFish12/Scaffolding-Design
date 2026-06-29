@@ -9,6 +9,7 @@ export default async function ResourcesPage() {
   let ganttJobs: GanttJob[] = []
   let poolEntries: { id: string; weekStartDate: string; availableManhours: number }[] = []
   let weeks: Date[] = []
+  let loadError = false
 
   try {
     const jobs = await prisma.job.findMany({
@@ -85,6 +86,7 @@ export default async function ResourcesPage() {
     ganttJobs = []
     weeks = []
     poolEntries = []
+    loadError = true
   }
 
   return (
@@ -100,7 +102,11 @@ export default async function ResourcesPage() {
         </Button>
       </div>
       <div className="flex-1 overflow-auto">
-        {weeks.length === 0 ? (
+        {loadError ? (
+          <div className="p-8 text-center text-muted-foreground text-sm">
+            Could not load schedule data. Please try again later.
+          </div>
+        ) : weeks.length === 0 ? (
           <div className="p-8 text-center text-muted-foreground text-sm">
             No phases found. Add phases in the Schedule view first.
           </div>

@@ -67,4 +67,41 @@ describe('computeWeeklyDemand', () => {
     const w0 = demand.find(d => d.weekStart.getTime() === week1.getTime())
     expect(w0?.totalManhours).toBeCloseTo(150, 0) // 100 + 50
   })
+
+  it('does not over-distribute for a non-Monday-aligned phase', () => {
+    // Phase starts Wednesday 2026-07-08 → floored to Monday 2026-07-06
+    // Ends 2026-07-22 (Tuesday) → overlaps weeks 07-06, 07-13, 07-20 (3 weeks)
+    // durationWeeks = ceil(16 days / 7) = 3 → weeklyShare = 300/3 = 100 each
+    const wednesdayJob: GanttJob = {
+      jobId: 'job-w',
+      title: 'Wednesday Job',
+      projectNumber: 'PW01',
+      structures: [{
+        structureId: 'S01',
+        structureName: 'Structure 1',
+        drawingId: 'draw-w',
+        phases: [{
+          id: 'phase-w',
+          jobId: 'job-w',
+          type: 'erect',
+          structureId: 'S01',
+          startDate: '2026-07-08T00:00:00.000Z', // Wednesday
+          endDate: '2026-07-22T00:00:00.000Z',   // Tuesday, 3 weeks after floored start
+          manhoursTotal: 300,
+        }],
+      }],
+    }
+    const weeks = [
+      new Date('2026-07-06T00:00:00.000Z'),
+      new Date('2026-07-13T00:00:00.000Z'),
+      new Date('2026-07-20T00:00:00.000Z'),
+      new Date('2026-07-27T00:00:00.000Z'),
+    ]
+    const demand = computeWeeklyDemand([wednesdayJob], weeks)
+    const total = demand.reduce((s, d) => s + d.totalManhours, 0)
+    // Total distributed must equal manhoursTotal (no over-distribution)
+    expect(total).toBeCloseTo(300, 0)
+    // Week 4 (07-27) has no overlap
+    expect(demand[3].totalManhours).toBe(0)
+  })
 })

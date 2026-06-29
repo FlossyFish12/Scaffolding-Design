@@ -56,7 +56,8 @@ export default async function SchedulePage() {
         structures,
       }
     })
-  } catch {
+  } catch (e) {
+    console.error('[SchedulePage] failed to load data:', e)
     ganttJobs = []
   }
 
