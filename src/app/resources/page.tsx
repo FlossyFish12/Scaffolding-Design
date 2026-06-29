@@ -54,7 +54,7 @@ export default async function ResourcesPage() {
       }),
     }))
 
-    // Determine week range: all phases ± 2 weeks, or next 12 weeks if no phases
+    // Determine week range: span of all phases, or next 12 weeks if no phases
     const allPhases = ganttJobs.flatMap(j => j.structures.flatMap(s => s.phases))
     const now = new Date()
     const rangeStart = allPhases.length > 0
@@ -80,7 +80,8 @@ export default async function ResourcesPage() {
       weekStartDate: e.weekStartDate.toISOString(),
       availableManhours: e.availableManhours,
     }))
-  } catch {
+  } catch (e) {
+    console.error('[ResourcesPage] failed to load data:', e)
     ganttJobs = []
     weeks = []
     poolEntries = []
