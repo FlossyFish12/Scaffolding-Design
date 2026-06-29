@@ -4,10 +4,15 @@ import { JobList } from '@/components/jobs/job-list'
 import { prisma } from '@/lib/db'
 
 export default async function JobsPage() {
-  const jobs = await prisma.job.findMany({
-    include: { _count: { select: { drawings: true } } },
-    orderBy: { createdAt: 'desc' },
-  })
+  let jobs: Awaited<ReturnType<typeof prisma.job.findMany>> = []
+  try {
+    jobs = await prisma.job.findMany({
+      include: { _count: { select: { drawings: true } } },
+      orderBy: { createdAt: 'desc' },
+    })
+  } catch {
+    // DB not yet connected (local dev) — show empty state
+  }
 
   return (
     <div className="space-y-6">
