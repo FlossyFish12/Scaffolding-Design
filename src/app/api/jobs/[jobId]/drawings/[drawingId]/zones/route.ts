@@ -39,7 +39,12 @@ export async function POST(request: Request, { params }: Params) {
     const { drawingId } = await params
     const drawing = await prisma.drawing.findUnique({ where: { id: drawingId }, select: { id: true } })
     if (!drawing) return NextResponse.json({ error: 'Not found' }, { status: 404 })
-    const body = await request.json()
+    let body: unknown
+    try {
+      body = await request.json()
+    } catch {
+      return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 })
+    }
     const result = zoneSchema.safeParse(body)
     if (!result.success) return NextResponse.json({ error: result.error.flatten() }, { status: 400 })
     const zone = await prisma.zone.create({ data: { drawingId, ...result.data } })

@@ -36,7 +36,12 @@ export async function GET(_req: Request, { params }: Params) {
 export async function PATCH(request: Request, { params }: Params) {
   try {
     const { zoneId } = await params
-    const body = await request.json()
+    let body: unknown
+    try {
+      body = await request.json()
+    } catch {
+      return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 })
+    }
     const result = patchSchema.safeParse(body)
     if (!result.success) return NextResponse.json({ error: result.error.flatten() }, { status: 400 })
     try {

@@ -1,5 +1,5 @@
 'use client'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
 import { suggestScaffoldType } from '@/lib/scaffold-rules'
@@ -57,11 +57,12 @@ export default function ZonePanel({
   const accessType = watch('accessType')
   const loadingClass = watch('loadingClass')
 
-  // Auto-suggest scaffold type when access type or loading class changes
+  // Auto-suggest scaffold type when access type or loading class changes.
+  // Skip the initial render so we don't overwrite the stored value in edit mode.
+  const didMount = useRef(false)
   useEffect(() => {
-    setValue('scaffoldType', suggestScaffoldType(accessType, loadingClass), {
-      shouldDirty: false,
-    })
+    if (!didMount.current) { didMount.current = true; return }
+    setValue('scaffoldType', suggestScaffoldType(accessType, loadingClass), { shouldDirty: true })
   }, [accessType, loadingClass, setValue])
 
   async function handleDelete() {
@@ -93,8 +94,9 @@ export default function ZonePanel({
       <form onSubmit={handleSubmit(onSave)} className="flex flex-col gap-4 p-4 flex-1">
         {/* Label */}
         <div>
-          <label className={LABEL_CLASS}>Label *</label>
+          <label htmlFor="zone-label" className={LABEL_CLASS}>Label *</label>
           <input
+            id="zone-label"
             {...register('label', { required: true })}
             className={FIELD_CLASS}
             placeholder="e.g. Zone A"
@@ -108,8 +110,8 @@ export default function ZonePanel({
 
         {/* Access Type */}
         <div>
-          <label className={LABEL_CLASS}>Access Type</label>
-          <select {...register('accessType')} className={FIELD_CLASS}>
+          <label htmlFor="zone-accessType" className={LABEL_CLASS}>Access Type</label>
+          <select id="zone-accessType" {...register('accessType')} className={FIELD_CLASS}>
             <option value="ground">Ground</option>
             <option value="elevated">Elevated</option>
             <option value="confined">Confined</option>
@@ -119,8 +121,8 @@ export default function ZonePanel({
 
         {/* Loading Class */}
         <div>
-          <label className={LABEL_CLASS}>Loading Class</label>
-          <select {...register('loadingClass')} className={FIELD_CLASS}>
+          <label htmlFor="zone-loadingClass" className={LABEL_CLASS}>Loading Class</label>
+          <select id="zone-loadingClass" {...register('loadingClass')} className={FIELD_CLASS}>
             <option value="light">Light</option>
             <option value="medium">Medium</option>
             <option value="heavy">Heavy</option>
@@ -130,8 +132,9 @@ export default function ZonePanel({
         {/* Measurements — 3-col grid */}
         <div className="grid grid-cols-3 gap-2">
           <div>
-            <label className={LABEL_CLASS}>Height (m)</label>
+            <label htmlFor="zone-heightM" className={LABEL_CLASS}>Height (m)</label>
             <input
+              id="zone-heightM"
               type="number"
               step="0.1"
               min="0"
@@ -140,8 +143,9 @@ export default function ZonePanel({
             />
           </div>
           <div>
-            <label className={LABEL_CLASS}>Perimeter (m)</label>
+            <label htmlFor="zone-perimeterM" className={LABEL_CLASS}>Perimeter (m)</label>
             <input
+              id="zone-perimeterM"
               type="number"
               step="0.1"
               min="0"
@@ -150,8 +154,9 @@ export default function ZonePanel({
             />
           </div>
           <div>
-            <label className={LABEL_CLASS}>Area (m²)</label>
+            <label htmlFor="zone-areaM2" className={LABEL_CLASS}>Area (m²)</label>
             <input
+              id="zone-areaM2"
               type="number"
               step="0.1"
               min="0"
@@ -163,11 +168,11 @@ export default function ZonePanel({
 
         {/* Scaffold Type */}
         <div>
-          <label className={LABEL_CLASS}>
+          <label htmlFor="zone-scaffoldType" className={LABEL_CLASS}>
             Scaffold Type{' '}
             <span className="font-normal text-muted-foreground">(auto-suggested)</span>
           </label>
-          <select {...register('scaffoldType')} className={FIELD_CLASS}>
+          <select id="zone-scaffoldType" {...register('scaffoldType')} className={FIELD_CLASS}>
             <option value="independent">Independent</option>
             <option value="birdcage">Birdcage</option>
             <option value="putlog">Putlog</option>
