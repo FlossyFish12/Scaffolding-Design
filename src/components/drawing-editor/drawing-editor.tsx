@@ -149,7 +149,7 @@ export default function DrawingEditor({ drawing, initialZones }: Props) {
         </div>
         <div className="flex items-center gap-3">
           <span className="text-xs text-muted-foreground">
-            {zones.filter((z) => z.pageNumber === currentPage).length} zone{zones.length !== 1 ? 's' : ''} on page
+            {pageZones.length} zone{pageZones.length !== 1 ? 's' : ''} on page
           </span>
           {/* Page navigation */}
           <div className="flex items-center gap-1">
