@@ -2,7 +2,10 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { NextRequest } from 'next/server'
 
 vi.mock('@/lib/db', () => ({
-  prisma: { drawing: { create: vi.fn(), findMany: vi.fn() } },
+  prisma: {
+    job: { findUnique: vi.fn() },
+    drawing: { create: vi.fn(), findMany: vi.fn() },
+  },
 }))
 
 vi.mock('@vercel/blob', () => ({
@@ -21,6 +24,7 @@ describe('POST /api/jobs/[jobId]/drawings', () => {
       structureName: 'Tank A', filename: 'ga.pdf',
       blobUrl: 'https://blob.example.com/test.pdf', pageCount: 1,
     }
+    vi.mocked(prisma.job.findUnique).mockResolvedValue({ id: 'j1' } as any)
     vi.mocked(prisma.drawing.create).mockResolvedValue(mockDrawing as any)
 
     const formData = new FormData()

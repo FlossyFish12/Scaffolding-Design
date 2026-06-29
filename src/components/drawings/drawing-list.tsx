@@ -8,7 +8,7 @@ type DrawingItem = {
   filename: string
   blobUrl: string
   pageCount: number
-  createdAt: string
+  createdAt: string | Date
 }
 
 export function DrawingList({ drawings, jobId }: { drawings: DrawingItem[]; jobId: string }) {

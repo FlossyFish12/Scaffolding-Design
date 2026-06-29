@@ -11,21 +11,29 @@ const createJobSchema = z.object({
 })
 
 export async function GET() {
-  const jobs = await prisma.job.findMany({
-    include: { _count: { select: { drawings: true } } },
-    orderBy: { createdAt: 'desc' },
-  })
-  return NextResponse.json(jobs)
+  try {
+    const jobs = await prisma.job.findMany({
+      include: { _count: { select: { drawings: true } } },
+      orderBy: { createdAt: 'desc' },
+    })
+    return NextResponse.json(jobs)
+  } catch {
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+  }
 }
 
 export async function POST(request: Request) {
-  const body = await request.json()
-  const result = createJobSchema.safeParse(body)
-  if (!result.success) {
-    return NextResponse.json({ error: result.error.flatten() }, { status: 400 })
+  try {
+    const body = await request.json()
+    const result = createJobSchema.safeParse(body)
+    if (!result.success) {
+      return NextResponse.json({ error: result.error.flatten() }, { status: 400 })
+    }
+    const job = await prisma.job.create({
+      data: { ...result.data, startDate: new Date(result.data.startDate) },
+    })
+    return NextResponse.json(job, { status: 201 })
+  } catch {
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
-  const job = await prisma.job.create({
-    data: { ...result.data, startDate: new Date(result.data.startDate) },
-  })
-  return NextResponse.json(job, { status: 201 })
 }
