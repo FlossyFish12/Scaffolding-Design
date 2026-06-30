@@ -1,6 +1,9 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import type { Prisma } from '@prisma/client'
 import { prisma } from '@/lib/db'
+
+type JobDetail = Prisma.JobGetPayload<{ include: { drawings: true } }>
 import { Button } from '@/components/ui/button'
 import { DrawingList } from '@/components/drawings/drawing-list'
 import { UploadDrawingForm } from '@/components/drawings/upload-drawing-form'
@@ -10,10 +13,15 @@ type Params = { params: Promise<{ jobId: string }> }
 
 export default async function JobDetailPage({ params }: Params) {
   const { jobId } = await params
-  const job = await prisma.job.findUnique({
-    where: { id: jobId },
-    include: { drawings: { orderBy: { structureId: 'asc' } } },
-  })
+  let job: JobDetail | null = null
+  try {
+    job = await prisma.job.findUnique({
+      where: { id: jobId },
+      include: { drawings: { orderBy: { structureId: 'asc' } } },
+    })
+  } catch {
+    // DB unreachable — treat as not found
+  }
   if (!job) notFound()
 
   return (
