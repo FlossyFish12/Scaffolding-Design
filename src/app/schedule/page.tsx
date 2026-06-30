@@ -68,10 +68,18 @@ export default async function SchedulePage() {
         style={{ background: 'var(--card)' }}
       >
         <h1 className="text-xl font-semibold">Level 4 Schedule</h1>
-        <Button render={<Link href="/resources" />}
-          style={{ fontSize: 12, padding: '4px 12px' }}>
-          Resource View
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            render={<a href="/api/export/schedule" download />}
+            style={{ fontSize: 12, padding: '4px 12px' }}
+          >
+            Export Schedule
+          </Button>
+          <Button render={<Link href="/resources" />}
+            style={{ fontSize: 12, padding: '4px 12px' }}>
+            Resource View
+          </Button>
+        </div>
       </div>
       <div className="flex-1 overflow-auto">
         <GanttChart jobs={ganttJobs} />
