@@ -27,7 +27,7 @@ export default async function JobDetailPage({ params }: Params) {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <Button render={<Link href={`/jobs/${job.id}/estimate`} />}>
+          <Button nativeButton={false} render={<Link href={`/jobs/${job.id}/estimate`} />}>
             View Estimate
           </Button>
           <JobStatusBadge status={job.status} />

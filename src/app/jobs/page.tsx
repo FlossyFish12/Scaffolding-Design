@@ -18,7 +18,7 @@ export default async function JobsPage() {
     <div className="p-6 space-y-6 overflow-auto h-full">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold">Jobs</h1>
-        <Button render={<Link href="/jobs/new" />}>New Job</Button>
+        <Button nativeButton={false} render={<Link href="/jobs/new" />}>New Job</Button>
       </div>
       <JobList jobs={jobs} />
     </div>

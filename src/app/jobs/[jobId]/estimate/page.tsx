@@ -66,6 +66,7 @@ export default async function EstimatePage({ params }: Params) {
         </h1>
         <div className="flex gap-2">
           <Button
+            nativeButton={false}
             render={
               <a
                 href={`/api/jobs/${jobId}/export/estimate`}
@@ -77,6 +78,7 @@ export default async function EstimatePage({ params }: Params) {
             Export Excel
           </Button>
           <Button
+            nativeButton={false}
             render={
               <a
                 href={`/api/jobs/${jobId}/export/report`}

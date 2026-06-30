@@ -96,7 +96,7 @@ export default async function ResourcesPage() {
         style={{ background: 'var(--card)' }}
       >
         <h1 className="text-xl font-semibold">Resource View</h1>
-        <Button render={<Link href="/schedule" />}
+        <Button nativeButton={false} render={<Link href="/schedule" />}
           style={{ fontSize: 12, padding: '4px 12px' }}>
           Gantt Schedule
         </Button>
