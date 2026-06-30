@@ -1,10 +1,13 @@
 import Link from 'next/link'
+import type { Prisma } from '@prisma/client'
 import { Button } from '@/components/ui/button'
 import { JobList } from '@/components/jobs/job-list'
 import { prisma } from '@/lib/db'
 
+type JobsResult = Prisma.JobGetPayload<{ include: { _count: { select: { drawings: true } } } }>[]
+
 export default async function JobsPage() {
-  let jobs: Awaited<ReturnType<typeof prisma.job.findMany>> = []
+  let jobs: JobsResult = []
   try {
     jobs = await prisma.job.findMany({
       include: { _count: { select: { drawings: true } } },
