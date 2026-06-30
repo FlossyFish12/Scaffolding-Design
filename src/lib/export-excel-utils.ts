@@ -105,3 +105,66 @@ export function buildEstimateWorkbook(job: EstimateJobData): XLSX.WorkBook {
   }
   return wb
 }
+
+import type { GanttJob } from '@/components/schedule/gantt-chart'
+import type { WeeklyDemand } from '@/lib/resource-histogram-utils'
+import { weekLabel } from '@/lib/schedule-utils'
+
+export function buildScheduleWorkbook(
+  jobs: GanttJob[],
+  weeks: Date[],
+  demand: WeeklyDemand[],
+  capacity: Map<string, number>,
+): XLSX.WorkBook {
+  const wb = XLSX.utils.book_new()
+  const date = new Date().toISOString().slice(0, 10)
+
+  // ── Phases sheet ──────────────────────────────────────────────────────
+  const phaseAoa: unknown[][] = [
+    [`Level 4 Schedule — ${date}`],
+    [],
+    ['Project #', 'Job Title', 'Structure ID', 'Structure Name', 'Phase Type', 'Start Date', 'End Date', 'Duration (weeks)', 'Total Manhours'],
+  ]
+
+  for (const job of jobs) {
+    for (const struct of job.structures) {
+      for (const phase of struct.phases) {
+        const start = new Date(phase.startDate)
+        const end = new Date(phase.endDate)
+        const durationWeeks = Math.ceil((end.getTime() - start.getTime()) / (7 * 24 * 60 * 60 * 1000))
+        phaseAoa.push([
+          job.projectNumber,
+          job.title,
+          struct.structureId,
+          struct.structureName,
+          phase.type,
+          phase.startDate.slice(0, 10),
+          phase.endDate.slice(0, 10),
+          durationWeeks,
+          phase.manhoursTotal,
+        ])
+      }
+    }
+  }
+
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(phaseAoa), 'Phases')
+
+  // ── Weekly Demand sheet ───────────────────────────────────────────────
+  const jobTitles = jobs.map((j) => `${j.projectNumber} — ${j.title}`)
+  const demandAoa: unknown[][] = [
+    [`Weekly Manhour Demand — ${date}`],
+    [],
+    ['Week', 'Total Demand', 'Capacity', ...jobTitles],
+  ]
+
+  for (const d of demand) {
+    const iso = d.weekStart.toISOString()
+    const cap = capacity.get(iso) ?? 0
+    const perJob = jobs.map((j) => d.byJob[j.jobId] ?? 0)
+    demandAoa.push([weekLabel(d.weekStart), d.totalManhours, cap, ...perJob])
+  }
+
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(demandAoa), 'Weekly Demand')
+
+  return wb
+}
