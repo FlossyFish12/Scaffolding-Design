@@ -68,7 +68,7 @@ export async function GET() {
     const wb = buildScheduleWorkbook(ganttJobs, weeks, demand, capacityMap)
     const buf = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' }) as Buffer
 
-    return new Response(buf, {
+    return new Response(new Uint8Array(buf), {
       headers: {
         'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         'Content-Disposition': 'attachment; filename="schedule.xlsx"',

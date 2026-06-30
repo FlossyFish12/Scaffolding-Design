@@ -54,7 +54,7 @@ export async function GET(_req: Request, { params }: Params) {
   const wb = buildEstimateWorkbook(jobData)
   const buf = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' }) as Buffer
 
-  return new Response(buf, {
+  return new Response(new Uint8Array(buf), {
     headers: {
       'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
       'Content-Disposition': `attachment; filename="${job.projectNumber}-estimate.xlsx"`,

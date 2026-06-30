@@ -124,7 +124,7 @@ export async function GET(_req: Request, { params }: Params) {
 
   const buffer = await renderToBuffer(React.createElement(EstimateReport, reportProps))
 
-  return new Response(buffer, {
+  return new Response(new Uint8Array(buffer), {
     headers: {
       'Content-Type': 'application/pdf',
       'Content-Disposition': `attachment; filename="${job.projectNumber}-estimate.pdf"`,
