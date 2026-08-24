@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { z } from 'zod'
 import { prisma } from '@/lib/db'
 import { generateEstimateItems } from '@/lib/estimate-engine'
+import { calculateMto } from '@/lib/calc/mto'
 
 type Params = { params: Promise<{ jobId: string; drawingId: string; zoneId: string }> }
 
@@ -10,7 +11,7 @@ const GenerateSchema = z.object({
 })
 
 export async function POST(req: Request, { params }: Params) {
-  const { zoneId } = await params
+  const { jobId, drawingId, zoneId } = await params
   let body: unknown
   try {
     body = await req.json()
@@ -59,6 +60,40 @@ export async function POST(req: Request, { params }: Params) {
       { heightM: zone.heightM, perimeterM: zone.perimeterM, areaM2: zone.areaM2 },
     )
 
+    // ── MTO sync: derive MTO from zone dimensions (with 10% waste) ──
+    const loadClassMap: Record<string, number> = { light: 2, medium: 3, heavy: 4 }
+    const bayLengthM = 2.1
+    const liftHeightM = 2.0
+    const boards = 4
+    const numBays = Math.max(1, Math.round((zone.perimeterM || 10) / bayLengthM))
+    const mtoParams = {
+      height_m: zone.heightM || 6,
+      bay_length_m: bayLengthM,
+      lift_height_m: liftHeightM,
+      boards,
+      num_bays: numBays,
+      load_class: loadClassMap[zone.loadingClass] ?? 2,
+      wind_zone: 2,
+      tie_pattern: 'alternate' as const,
+      ground_bearing_kpa: 50,
+      job_ref: zone.label || 'ZONE-MTO',
+    }
+    let mtoItems: typeof newItems = []
+    try {
+      const mto = calculateMto(mtoParams as any)
+      mtoItems = mto.items.map((it) => ({
+        category: 'material' as const,
+        description: `[MTO] ${it.item}`,
+        quantity: Math.round(it.qty * 1.1 * 100) / 100,
+        unit: it.unit,
+        unitManhours: 0,
+      }))
+    } catch {
+      // MTO calc failed — skip
+    }
+    // Merge template + MTO (MTO respects same overridden guard)
+    const mergedNewItems = [...newItems, ...mtoItems]
+
     // Keys of existing overridden items — we skip re-generating these
     const overriddenKeys = new Set(
       zone.estimateItems
@@ -66,7 +101,7 @@ export async function POST(req: Request, { params }: Params) {
         .map((i) => `${i.category}:${i.description}`),
     )
 
-    const toCreate = newItems.filter(
+    const toCreate = mergedNewItems.filter(
       (i) => !overriddenKeys.has(`${i.category}:${i.description}`),
     )
 
@@ -79,6 +114,32 @@ export async function POST(req: Request, { params }: Params) {
         orderBy: [{ category: 'asc' }, { description: 'asc' }],
       })
     })
+
+    // ── Phase → Resource re-calc: update manhoursTotal for phases of this structure ──
+    try {
+      const drawing = await prisma.drawing.findUnique({ where: { id: drawingId }, select: { structureId: true, jobId: true } })
+      const targetJobId = jobId || drawing?.jobId
+      const structureId = drawing?.structureId
+      if (targetJobId && structureId) {
+        // Sum labour quantities for all zones of this structure (via drawings)
+        const zonesForStructure = await prisma.zone.findMany({
+          where: { drawing: { jobId: targetJobId, structureId } },
+          include: { estimateItems: { where: { category: 'labour' } } },
+        })
+        const labourTotal = zonesForStructure.reduce((sum, z) => sum + z.estimateItems.reduce((s, it) => s + it.quantity * (it.unitManhours || 1), 0), 0)
+        if (labourTotal > 0) {
+          const phases = await prisma.phase.findMany({ where: { jobId: targetJobId, structureId } })
+          if (phases.length > 0) {
+            // Distribute equally if multiple phases, else assign to single
+            const perPhase = Math.round((labourTotal / phases.length) * 100) / 100
+            await Promise.all(phases.map((p) => prisma.phase.update({ where: { id: p.id }, data: { manhoursTotal: perPhase } })))
+          }
+        }
+      }
+    } catch {
+      // phase update is best-effort
+    }
+
     return NextResponse.json(allItems)
   } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })

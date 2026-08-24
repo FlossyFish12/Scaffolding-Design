@@ -1,11 +1,6 @@
 import { notFound } from 'next/navigation'
-import dynamic from 'next/dynamic'
 import { prisma } from '@/lib/db'
-
-const DrawingEditor = dynamic(
-  () => import('@/components/drawing-editor/drawing-editor'),
-  { ssr: false },
-)
+import DrawingEditor from '@/components/drawing-editor/drawing-editor'
 
 export default async function DrawingEditorPage({
   params,
