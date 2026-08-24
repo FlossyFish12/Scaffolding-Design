@@ -33,7 +33,14 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
   }
   try {
-    const template = await prisma.template.create({ data: parsed.data })
+    const template = await prisma.template.create({
+      data: {
+        name: parsed.data.name,
+        scaffoldType: parsed.data.scaffoldType,
+        accessTypes: JSON.stringify(parsed.data.accessTypes),
+        loadingClasses: JSON.stringify(parsed.data.loadingClasses),
+      },
+    })
     return NextResponse.json(template, { status: 201 })
   } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })

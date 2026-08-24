@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { put, del } from '@vercel/blob'
+import { putLocal as put, delLocal as del } from '@/lib/blob-local'
 import { prisma } from '@/lib/db'
 import { z } from 'zod'
 

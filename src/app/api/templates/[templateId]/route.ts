@@ -39,7 +39,10 @@ export async function PATCH(req: Request, { params }: Params) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
   }
   try {
-    const template = await prisma.template.update({ where: { id: templateId }, data: parsed.data })
+    const data: Record<string, unknown> = { ...parsed.data }
+    if (parsed.data.accessTypes) data.accessTypes = JSON.stringify(parsed.data.accessTypes)
+    if (parsed.data.loadingClasses) data.loadingClasses = JSON.stringify(parsed.data.loadingClasses)
+    const template = await prisma.template.update({ where: { id: templateId }, data })
     return NextResponse.json(template)
   } catch (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2025') {

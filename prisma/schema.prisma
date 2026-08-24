@@ -4,7 +4,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
 }
 
 enum JobStatus {
@@ -107,8 +107,8 @@ model Template {
   id             String             @id @default(cuid())
   name           String
   scaffoldType   ScaffoldType
-  accessTypes    AccessType[]
-  loadingClasses LoadingClass[]
+  accessTypes    String   @default("[]")
+  loadingClasses String   @default("[]")
   lineItems      TemplateLineItem[]
   zones          Zone[]
 }

@@ -3,7 +3,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 const mockPrisma = vi.hoisted(() => {
   const estimateItem = { deleteMany: vi.fn(), createMany: vi.fn(), findMany: vi.fn() }
   const zone = { findUnique: vi.fn(), update: vi.fn() }
-  const template = { findUnique: vi.fn(), findFirst: vi.fn() }
+  const template = { findUnique: vi.fn(), findFirst: vi.fn(), findMany: vi.fn() }
 
   return {
     zone,
@@ -49,6 +49,8 @@ const TEMPLATE = {
   id: 'tpl-1',
   name: 'Standard Independent',
   scaffoldType: 'independent',
+  accessTypes: JSON.stringify(['ground', 'elevated']),
+  loadingClasses: JSON.stringify(['light', 'medium']),
   lineItems: [{ id: 'li-1', category: 'labour', description: 'Erect', formula: 'area_m2 * height_m * 0.15', unit: 'hrs' }],
 }
 
@@ -65,7 +67,7 @@ beforeEach(() => {
 describe('POST /zones/[zoneId]/estimate', () => {
   it('auto-matches template and returns generated items with 200', async () => {
     mockPrisma.zone.findUnique.mockResolvedValue(ZONE)
-    mockPrisma.template.findFirst.mockResolvedValue(TEMPLATE)
+    mockPrisma.template.findMany.mockResolvedValue([TEMPLATE])
     const res = await POST(makeReq(), makeParams())
     expect(res.status).toBe(200)
     const body = await res.json()
@@ -82,7 +84,7 @@ describe('POST /zones/[zoneId]/estimate', () => {
 
   it('returns 422 when no matching template found', async () => {
     mockPrisma.zone.findUnique.mockResolvedValue(ZONE)
-    mockPrisma.template.findFirst.mockResolvedValue(null)
+    mockPrisma.template.findMany.mockResolvedValue([])
     const res = await POST(makeReq(), makeParams())
     expect(res.status).toBe(422)
   })
@@ -96,7 +98,7 @@ describe('POST /zones/[zoneId]/estimate', () => {
   it('preserves overridden existing items', async () => {
     const overriddenItem = { id: 'ei-0', zoneId: 'z1', category: 'labour', description: 'Erect', quantity: 99, unit: 'hrs', unitManhours: 1.5, overridden: true }
     mockPrisma.zone.findUnique.mockResolvedValue({ ...ZONE, estimateItems: [overriddenItem] })
-    mockPrisma.template.findFirst.mockResolvedValue(TEMPLATE)
+    mockPrisma.template.findMany.mockResolvedValue([TEMPLATE])
     await POST(makeReq(), makeParams())
     // Should only delete non-overridden items
     expect(mockPrisma.estimateItem.deleteMany).toHaveBeenCalledWith({ where: { zoneId: 'z1', overridden: false } })

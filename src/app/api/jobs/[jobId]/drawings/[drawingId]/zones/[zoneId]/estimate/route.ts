@@ -37,14 +37,20 @@ export async function POST(req: Request, { params }: Params) {
       })
       if (!template) return NextResponse.json({ error: 'Template not found' }, { status: 404 })
     } else {
-      template = await prisma.template.findFirst({
-        where: {
-          scaffoldType: zone.scaffoldType,
-          accessTypes: { has: zone.accessType },
-          loadingClasses: { has: zone.loadingClass },
-        },
+      const candidates = await prisma.template.findMany({
+        where: { scaffoldType: zone.scaffoldType },
         include: { lineItems: true },
       })
+      template =
+        candidates.find((t) => {
+          try {
+            const ats = JSON.parse(t.accessTypes || '[]')
+            const lcs = JSON.parse(t.loadingClasses || '[]')
+            return ats.includes(zone.accessType) && lcs.includes(zone.loadingClass)
+          } catch {
+            return false
+          }
+        }) ?? null
     }
     if (!template) {
       return NextResponse.json({ error: 'No matching template found' }, { status: 422 })
