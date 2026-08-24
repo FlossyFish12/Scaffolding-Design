@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/db'
 import ResourceHistogram from '@/components/schedule/resource-histogram'
+import CrewCalendar from '@/components/schedule/crew-calendar'
 import type { GanttJob } from '@/components/schedule/gantt-chart'
 import { weeksInRange } from '@/lib/schedule-utils'
 import Link from 'next/link'
@@ -101,7 +102,7 @@ export default async function ResourcesPage() {
           Gantt Schedule
         </Button>
       </div>
-      <div className="flex-1 overflow-auto">
+      <div className="flex-1 overflow-auto p-6 space-y-6">
         {loadError ? (
           <div className="p-8 text-center text-muted-foreground text-sm">
             Could not load schedule data. Please try again later.
@@ -111,7 +112,10 @@ export default async function ResourcesPage() {
             No phases found. Add phases in the Schedule view first.
           </div>
         ) : (
-          <ResourceHistogram jobs={ganttJobs} weeks={weeks} initialPool={poolEntries} />
+          <>
+            <ResourceHistogram jobs={ganttJobs} weeks={weeks} initialPool={poolEntries} />
+            <CrewCalendar jobs={ganttJobs} weeks={weeks} initialPool={poolEntries} />
+          </>
         )}
       </div>
     </div>

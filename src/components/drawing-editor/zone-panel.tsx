@@ -6,6 +6,9 @@ import { suggestScaffoldType } from '@/lib/scaffold-rules'
 import { runCalc } from '@/lib/calc'
 import { calculateDensity, TUBE_SPECS, BOARD_SPECS } from '@/lib/calc/density'
 import { calculateMto } from '@/lib/calc/mto'
+import dynamic from 'next/dynamic'
+
+const Scaffold3DPreview = dynamic(() => import('@/components/preview/scaffold-3d-preview'), { ssr: false })
 
 export type ZoneFormValues = {
   label: string
@@ -429,6 +432,20 @@ export default function ZonePanel({
                     {mtoResult.items.slice(0,5).map(it => <div key={it.item} className="flex justify-between"><span>{it.item}</span><span>{it.qty} {it.unit}</span></div>)}
                     {mtoResult.items.length>5 && <div className="text-muted-foreground">+ {mtoResult.items.length-5} more — see /calc for full</div>}
                   </div>
+                </div>
+              )}
+
+              {/* 3D Preview */}
+              {heightM > 0 && (
+                <div className="rounded border bg-card p-2">
+                  <Scaffold3DPreview
+                    heightM={heightM}
+                    bayLengthM={bayLengthM}
+                    numBays={derivedNumBays}
+                    boardsWide={boardsWide}
+                    liftHeightM={liftHeightM}
+                    scaffoldType={scaffoldType}
+                  />
                 </div>
               )}
             </div>

@@ -8,6 +8,9 @@ import { runCalc } from '@/lib/calc'
 import { calculateMto } from '@/lib/calc/mto'
 import { calculateDensity, TUBE_SPECS, BOARD_SPECS, SCAFFOLD_TYPES } from '@/lib/calc/density'
 import type { CalcResult, ScaffoldParams } from '@/lib/calc/types'
+import dynamic from 'next/dynamic'
+
+const Scaffold3DPreview = dynamic(() => import('@/components/preview/scaffold-3d-preview'), { ssr: false })
 
 export default function CalcPage() {
   const [result, setResult] = useState<CalcResult | null>(null)
@@ -96,23 +99,36 @@ export default function CalcPage() {
               </div>
             </div>
             {result && submittedParams && (
-              <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+              <>
+                <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                  <div className="rounded-xl bg-slate-900 border border-slate-700 p-6">
+                    <ElevationView params={submittedParams as unknown as ScaffoldParams} />
+                  </div>
+                  <div className="rounded-xl bg-white border p-6 shadow-sm">
+                    <MtoPanel mto={calculateMto(submittedParams as unknown as ScaffoldParams)} jobRef={result.jobRef} />
+                  </div>
+                </div>
                 <div className="rounded-xl bg-slate-900 border border-slate-700 p-6">
-                  <ElevationView params={submittedParams as unknown as ScaffoldParams} />
+                  <Scaffold3DPreview
+                    heightM={(submittedParams as any).height_m}
+                    bayLengthM={(submittedParams as any).bay_length_m}
+                    numBays={(submittedParams as any).num_bays}
+                    boardsWide={(submittedParams as any).boards}
+                    liftHeightM={(submittedParams as any).lift_height_m}
+                    scaffoldType="independent"
+                  />
                 </div>
-                <div className="rounded-xl bg-white border p-6 shadow-sm">
-                  <MtoPanel mto={calculateMto(submittedParams as unknown as ScaffoldParams)} jobRef={result.jobRef} />
-                </div>
-              </div>
+              </>
             )}
             <p className="text-xs text-slate-400 text-center">
               TG20 table values are representative — verify against NASC TG20:13 eGuide before production use.
             </p>
           </>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="rounded-xl bg-white border p-6 shadow-sm space-y-4">
-              <h3 className="text-sm font-semibold">Scaffold Density — Inputs</h3>
+          <>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="rounded-xl bg-white border p-6 shadow-sm space-y-4">
+                <h3 className="text-sm font-semibold">Scaffold Density — Inputs</h3>
               <div className="grid grid-cols-2 gap-3 text-xs">
                 <label>Zone name<input value={densityInput.zone_name} onChange={e => setDensityInput({ ...densityInput, zone_name: e.target.value })} className="w-full mt-1 rounded border px-2 py-1.5" /></label>
                 <label>Bay length (m)<input type="number" step="0.1" value={densityInput.bay_length} onChange={e => setDensityInput({ ...densityInput, bay_length: parseFloat(e.target.value) || 0 })} className="w-full mt-1 rounded border px-2 py-1.5" /></label>
@@ -178,6 +194,17 @@ export default function CalcPage() {
               </div>
             </div>
           </div>
+          <div className="rounded-xl bg-slate-900 border border-slate-700 p-6">
+            <Scaffold3DPreview
+              heightM={densityInput.num_lifts * densityInput.lift_height}
+              bayLengthM={densityInput.bay_length}
+              numBays={densityInput.num_bays}
+              boardsWide={densityInput.boards_wide}
+              liftHeightM={densityInput.lift_height}
+              scaffoldType={SCAFFOLD_TYPES[densityInput.scaffold_idx] as any}
+            />
+          </div>
+          </>
         )}
       </div>
     </div>

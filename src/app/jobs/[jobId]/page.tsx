@@ -7,6 +7,7 @@ type JobDetail = Prisma.JobGetPayload<{ include: { drawings: true } }>
 import { Button } from '@/components/ui/button'
 import { DrawingList } from '@/components/drawings/drawing-list'
 import { UploadDrawingForm } from '@/components/drawings/upload-drawing-form'
+import DxfPreview from '@/components/drawings/dxf-preview'
 import { JobStatusBadge } from '@/components/jobs/job-status-badge'
 
 type Params = { params: Promise<{ jobId: string }> }
@@ -45,9 +46,12 @@ export default async function JobDetailPage({ params }: Params) {
       <section className="space-y-4">
         <h2 className="text-lg font-medium">Drawings</h2>
         <DrawingList drawings={job.drawings} jobId={job.id} />
-        <div className="border-t pt-4">
-          <h3 className="text-sm font-medium mb-3">Upload Drawing</h3>
-          <UploadDrawingForm jobId={job.id} />
+        <div className="border-t pt-4 grid gap-6 md:grid-cols-2">
+          <div>
+            <h3 className="text-sm font-medium mb-3">Upload Drawing (PDF)</h3>
+            <UploadDrawingForm jobId={job.id} />
+          </div>
+          <DxfPreview />
         </div>
       </section>
     </div>
