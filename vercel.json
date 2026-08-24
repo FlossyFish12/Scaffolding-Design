@@ -1,0 +1,10 @@
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": ".next",
+  "framework": "nextjs",
+  "installCommand": "npm install",
+  "env": {
+    "DATABASE_URL": "@database-url",
+    "BLOB_READ_WRITE_TOKEN": "@blob-token"
+  }
+}

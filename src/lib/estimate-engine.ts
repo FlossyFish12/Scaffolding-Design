@@ -30,7 +30,7 @@ export function evaluateFormula(formula: string, zone: ZoneDimensions): number {
   if (!/^[\d\s+\-*/.()]+$/.test(expr)) {
     throw new Error(`Invalid formula expression: "${formula}"`)
   }
-  // eslint-disable-next-line no-new-func
+   
   const result = Function(`"use strict"; return (${expr})`)() as number
   if (!Number.isFinite(result)) {
     throw new Error(`Formula produced non-finite result: "${formula}"`)
