@@ -9,6 +9,7 @@ import { calculateMto } from '@/lib/calc/mto'
 import dynamic from 'next/dynamic'
 
 const Scaffold3DPreview = dynamic(() => import('@/components/preview/scaffold-3d-preview'), { ssr: false })
+const SafetyChecklist = dynamic(() => import('@/components/safety/checklist'), { ssr: false })
 
 export type ZoneFormValues = {
   label: string
@@ -29,6 +30,7 @@ export type TemplateSummary = {
 
 type Props = {
   mode: 'new' | 'edit'
+  zoneId?: string
   initialValues?: Partial<ZoneFormValues>
   templates?: TemplateSummary[]
   onSave: (values: ZoneFormValues) => Promise<void>
@@ -43,6 +45,7 @@ const LABEL_CLASS = 'block text-xs font-medium text-muted-foreground mb-1'
 
 export default function ZonePanel({
   mode,
+  zoneId,
   initialValues,
   templates = [],
   onSave,
@@ -446,6 +449,14 @@ export default function ZonePanel({
                     liftHeightM={liftHeightM}
                     scaffoldType={scaffoldType}
                   />
+                </div>
+              )}
+
+              {/* Per-zone Safety (edit mode only) */}
+              {mode === 'edit' && (
+                <div className="rounded border bg-card p-2">
+                  <p className="text-xs font-semibold mb-2">Safety — {label || 'Zone'}</p>
+                  <SafetyChecklist zoneId={zoneId || 'zone-preview'} title="Zone Checklist" />
                 </div>
               )}
             </div>

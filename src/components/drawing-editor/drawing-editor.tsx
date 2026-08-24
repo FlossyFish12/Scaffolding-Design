@@ -260,6 +260,7 @@ export default function DrawingEditor({ drawing, initialZones }: Props) {
           <ZonePanel
             key={selectedZoneId ?? 'new'}
             mode={panelMode}
+            zoneId={selectedZoneId ?? undefined}
             initialValues={panelInitialValues}
             templates={templates}
             onSave={handleSave}
