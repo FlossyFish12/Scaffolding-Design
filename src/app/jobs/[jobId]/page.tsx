@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { DrawingList } from '@/components/drawings/drawing-list'
 import { UploadDrawingForm } from '@/components/drawings/upload-drawing-form'
 import DxfPreview from '@/components/drawings/dxf-preview'
+import IfcPreview from '@/components/import/ifc-preview'
 import { JobStatusBadge } from '@/components/jobs/job-status-badge'
 
 type Params = { params: Promise<{ jobId: string }> }
@@ -52,6 +53,9 @@ export default async function JobDetailPage({ params }: Params) {
             <UploadDrawingForm jobId={job.id} />
           </div>
           <DxfPreview />
+        </div>
+        <div className="border-t pt-4">
+          <IfcPreview />
         </div>
       </section>
     </div>
