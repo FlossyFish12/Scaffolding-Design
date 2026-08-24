@@ -6,6 +6,7 @@ import { useEffect, useState } from "react"
 
 const NAV_ITEMS = [
   { href: "/jobs",      label: "Jobs",      icon: <BriefcaseIcon /> },
+  { href: "/calc",      label: "Calc",      icon: <CalcIcon />      },
   { href: "/schedule",  label: "Schedule",  icon: <CalendarIcon />  },
   { href: "/resources", label: "Resources", icon: <UsersIcon />     },
 ]
@@ -123,6 +124,9 @@ function CalendarIcon() {
 }
 function UsersIcon() {
   return <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+}
+function CalcIcon() {
+  return <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 6h8M8 10h8M8 14h8M8 18h8"/></svg>
 }
 function HamburgerIcon() {
   return <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>

@@ -1,0 +1,41 @@
+{
+  "_note": "Representative values only. Verify against NASC TG20:13 eGuide before production use.",
+  "standard_configurations": [
+    {"bay_length_m": 1.8, "lift_height_m": 2.0, "boards": 4, "load_class": 2, "wind_zone": 1, "tie_pattern": "alternate", "max_height_m": 28.0, "max_leg_load_kn": 12.5, "tg20_ref": "Table B.1"},
+    {"bay_length_m": 1.8, "lift_height_m": 2.0, "boards": 4, "load_class": 2, "wind_zone": 2, "tie_pattern": "alternate", "max_height_m": 24.0, "max_leg_load_kn": 12.5, "tg20_ref": "Table B.1"},
+    {"bay_length_m": 1.8, "lift_height_m": 2.0, "boards": 4, "load_class": 2, "wind_zone": 3, "tie_pattern": "alternate", "max_height_m": 20.0, "max_leg_load_kn": 12.5, "tg20_ref": "Table B.1"},
+    {"bay_length_m": 1.8, "lift_height_m": 2.0, "boards": 4, "load_class": 2, "wind_zone": 4, "tie_pattern": "alternate", "max_height_m": 16.0, "max_leg_load_kn": 12.5, "tg20_ref": "Table B.1"},
+    {"bay_length_m": 2.1, "lift_height_m": 2.0, "boards": 4, "load_class": 2, "wind_zone": 1, "tie_pattern": "alternate", "max_height_m": 24.0, "max_leg_load_kn": 14.2, "tg20_ref": "Table B.1"},
+    {"bay_length_m": 2.1, "lift_height_m": 2.0, "boards": 4, "load_class": 2, "wind_zone": 2, "tie_pattern": "alternate", "max_height_m": 20.0, "max_leg_load_kn": 14.2, "tg20_ref": "Table B.1"},
+    {"bay_length_m": 2.1, "lift_height_m": 2.0, "boards": 4, "load_class": 2, "wind_zone": 3, "tie_pattern": "alternate", "max_height_m": 16.0, "max_leg_load_kn": 14.2, "tg20_ref": "Table B.1"},
+    {"bay_length_m": 2.1, "lift_height_m": 2.0, "boards": 4, "load_class": 2, "wind_zone": 4, "tie_pattern": "alternate", "max_height_m": 12.0, "max_leg_load_kn": 14.2, "tg20_ref": "Table B.1"},
+    {"bay_length_m": 2.4, "lift_height_m": 2.0, "boards": 4, "load_class": 2, "wind_zone": 1, "tie_pattern": "alternate", "max_height_m": 20.0, "max_leg_load_kn": 15.8, "tg20_ref": "Table B.1"},
+    {"bay_length_m": 2.4, "lift_height_m": 2.0, "boards": 4, "load_class": 2, "wind_zone": 2, "tie_pattern": "alternate", "max_height_m": 16.0, "max_leg_load_kn": 15.8, "tg20_ref": "Table B.1"},
+    {"bay_length_m": 2.4, "lift_height_m": 2.0, "boards": 4, "load_class": 2, "wind_zone": 3, "tie_pattern": "alternate", "max_height_m": 12.0, "max_leg_load_kn": 15.8, "tg20_ref": "Table B.1"},
+    {"bay_length_m": 2.4, "lift_height_m": 2.0, "boards": 4, "load_class": 2, "wind_zone": 4, "tie_pattern": "alternate", "max_height_m":  8.0, "max_leg_load_kn": 15.8, "tg20_ref": "Table B.1"},
+    {"bay_length_m": 2.1, "lift_height_m": 2.0, "boards": 3, "load_class": 2, "wind_zone": 1, "tie_pattern": "alternate", "max_height_m": 26.0, "max_leg_load_kn": 12.8, "tg20_ref": "Table B.2"},
+    {"bay_length_m": 2.1, "lift_height_m": 2.0, "boards": 3, "load_class": 2, "wind_zone": 2, "tie_pattern": "alternate", "max_height_m": 22.0, "max_leg_load_kn": 12.8, "tg20_ref": "Table B.2"},
+    {"bay_length_m": 2.1, "lift_height_m": 2.0, "boards": 3, "load_class": 2, "wind_zone": 3, "tie_pattern": "alternate", "max_height_m": 18.0, "max_leg_load_kn": 12.8, "tg20_ref": "Table B.2"},
+    {"bay_length_m": 2.1, "lift_height_m": 2.0, "boards": 3, "load_class": 2, "wind_zone": 4, "tie_pattern": "alternate", "max_height_m": 14.0, "max_leg_load_kn": 12.8, "tg20_ref": "Table B.2"},
+    {"bay_length_m": 2.1, "lift_height_m": 2.0, "boards": 5, "load_class": 2, "wind_zone": 1, "tie_pattern": "alternate", "max_height_m": 22.0, "max_leg_load_kn": 15.6, "tg20_ref": "Table B.3"},
+    {"bay_length_m": 2.1, "lift_height_m": 2.0, "boards": 5, "load_class": 2, "wind_zone": 2, "tie_pattern": "alternate", "max_height_m": 18.0, "max_leg_load_kn": 15.6, "tg20_ref": "Table B.3"},
+    {"bay_length_m": 2.1, "lift_height_m": 2.0, "boards": 5, "load_class": 2, "wind_zone": 3, "tie_pattern": "alternate", "max_height_m": 14.0, "max_leg_load_kn": 15.6, "tg20_ref": "Table B.3"},
+    {"bay_length_m": 2.1, "lift_height_m": 2.0, "boards": 5, "load_class": 2, "wind_zone": 4, "tie_pattern": "alternate", "max_height_m": 10.0, "max_leg_load_kn": 15.6, "tg20_ref": "Table B.3"}
+  ],
+  "load_classes": {
+    "1": {"udl_kn_m2": 0.75, "point_load_kn": 1.5},
+    "2": {"udl_kn_m2": 1.50, "point_load_kn": 1.5},
+    "3": {"udl_kn_m2": 2.00, "point_load_kn": 1.5},
+    "4": {"udl_kn_m2": 3.00, "point_load_kn": 3.0},
+    "5": {"udl_kn_m2": 4.50, "point_load_kn": 3.0},
+    "6": {"udl_kn_m2": 6.00, "point_load_kn": 3.0}
+  },
+  "load_class_height_factors": {
+    "1": 1.1,
+    "2": 1.0,
+    "3": 0.90,
+    "4": 0.75,
+    "5": 0.60,
+    "6": 0.50
+  }
+}
