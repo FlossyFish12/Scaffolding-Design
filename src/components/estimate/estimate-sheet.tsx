@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 
 type EstimateItem = {
   id: string
@@ -37,6 +37,7 @@ type Props = {
 const OVERRIDE_BG = 'bg-amber-50'
 
 export default function EstimateSheet({ jobId, title, structures }: Props): React.JSX.Element {
+  const [rateAedPerHour, setRateAedPerHour] = useState(45)
   const [items, setItems] = useState<Map<string, EstimateItem>>(() => {
     const map = new Map<string, EstimateItem>()
     for (const s of structures) {
@@ -90,10 +91,37 @@ export default function EstimateSheet({ jobId, title, structures }: Props): Reac
   const INPUT_CLASS =
     'w-full bg-transparent border-0 focus:outline-none focus:ring-1 focus:ring-[var(--ring)] rounded text-sm text-right'
 
+  const totals = useMemo(() => {
+    let totalHrs = 0
+    let totalCost = 0
+    for (const s of structures) {
+      for (const z of s.zones) {
+        for (const it of z.items) {
+          const item = items.get(it.id) ?? it
+          if (item.category === 'labour') {
+            const hrs = item.quantity * item.unitManhours
+            totalHrs += hrs
+            totalCost += hrs * rateAedPerHour
+          }
+        }
+      }
+    }
+    return { totalHrs, totalCost }
+  }, [structures, items, rateAedPerHour])
+
   return (
     <div className="p-6 space-y-8 overflow-auto h-full" style={{ background: 'var(--background)' }}>
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-4">
         <h1 className="text-2xl font-semibold">Estimate — {title}</h1>
+        <div className="flex items-center gap-3 text-xs">
+          <label className="flex items-center gap-1.5">
+            Rate (AED/hr)
+            <input type="number" value={rateAedPerHour} onChange={e => setRateAedPerHour(parseFloat(e.target.value)||0)} className="w-20 rounded border px-2 py-1 text-sm text-right" />
+          </label>
+          <span className="px-2 py-1 rounded bg-[var(--navy)] text-white font-medium">
+            {totals.totalHrs.toFixed(1)} hrs · {totals.totalCost.toLocaleString()} AED
+          </span>
+        </div>
       </div>
 
       {structures.length === 0 && (
@@ -133,23 +161,24 @@ export default function EstimateSheet({ jobId, title, structures }: Props): Reac
                     </span>
                   </div>
 
-                  {zoneItems.length === 0 ? (
+                    {zoneItems.length === 0 ? (
                     <p className="px-4 py-3 text-sm text-muted-foreground">No estimate items. Click Generate Estimate in the Drawing Editor.</p>
                   ) : (
                     <table className="w-full">
                       <thead>
                         <tr className="border-b border-border">
-                          <th className={HEADER_CELL} style={{ width: '40%' }}>Description</th>
+                          <th className={HEADER_CELL} style={{ width: '36%' }}>Description</th>
                           <th className={`${HEADER_CELL} text-right`}>Qty</th>
                           <th className={HEADER_CELL}>Unit</th>
                           <th className={`${HEADER_CELL} text-right`}>Manhours/unit</th>
                           <th className={`${HEADER_CELL} text-right`}>Total hrs</th>
+                          <th className={`${HEADER_CELL} text-right`}>Cost (AED)</th>
                         </tr>
                       </thead>
                       <tbody>
                         {labourItems.length > 0 && (
                           <tr>
-                            <td colSpan={5} className="px-3 py-1 text-xs font-medium text-muted-foreground bg-muted/30">
+                            <td colSpan={6} className="px-3 py-1 text-xs font-medium text-muted-foreground bg-muted/30">
                               Labour
                             </td>
                           </tr>
@@ -186,12 +215,15 @@ export default function EstimateSheet({ jobId, title, structures }: Props): Reac
                             <td className={`${CELL} text-right font-medium`}>
                               {(item.quantity * item.unitManhours).toFixed(2)}
                             </td>
+                            <td className={`${CELL} text-right text-muted-foreground`}>
+                              {(item.quantity * item.unitManhours * rateAedPerHour).toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                            </td>
                           </tr>
                         ))}
 
                         {materialItems.length > 0 && (
                           <tr>
-                            <td colSpan={5} className="px-3 py-1 text-xs font-medium text-muted-foreground bg-muted/30">
+                            <td colSpan={6} className="px-3 py-1 text-xs font-medium text-muted-foreground bg-muted/30">
                               Materials
                             </td>
                           </tr>
@@ -216,14 +248,26 @@ export default function EstimateSheet({ jobId, title, structures }: Props): Reac
                             <td className={CELL}>{item.unit}</td>
                             <td className={`${CELL} text-right text-muted-foreground`}>—</td>
                             <td className={`${CELL} text-right text-muted-foreground`}>—</td>
+                            <td className={`${CELL} text-right text-muted-foreground`}>—</td>
                           </tr>
                         ))}
                       </tbody>
                     </table>
                   )}
+                  {labourItems.length > 0 && (
+                    <div className="px-4 py-2 bg-muted/20 border-t text-xs flex justify-between">
+                      <span>{zone.label} — {zoneManhours.toFixed(1)} hrs</span>
+                      <span className="font-medium">{(zoneManhours * rateAedPerHour).toLocaleString()} AED @ {rateAedPerHour}/hr</span>
+                    </div>
+                  )}
                 </div>
               )
             })}
+            {structure.zones.length > 0 && (
+              <div className="text-xs text-right text-muted-foreground">
+                {structure.structureName} total: {structureManhours.toFixed(1)} hrs · {(structureManhours * rateAedPerHour).toLocaleString()} AED
+              </div>
+            )}
           </div>
         )
       })}

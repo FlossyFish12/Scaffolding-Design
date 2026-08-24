@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation'
 import { prisma } from '@/lib/db'
 import EstimateSheet from '@/components/estimate/estimate-sheet'
+import ComplianceSummary from '@/components/estimate/compliance-summary'
 import { Button } from '@/components/ui/button'
 
 type Params = { params: Promise<{ jobId: string }> }
@@ -40,6 +41,11 @@ export default async function EstimatePage({ params }: Params) {
       id: zone.id,
       label: zone.label,
       scaffoldType: zone.scaffoldType,
+      accessType: zone.accessType,
+      loadingClass: zone.loadingClass,
+      heightM: zone.heightM,
+      perimeterM: zone.perimeterM,
+      areaM2: zone.areaM2,
       items: zone.estimateItems.map((item) => ({
         id: item.id,
         category: item.category as 'material' | 'labour',
@@ -54,6 +60,19 @@ export default async function EstimatePage({ params }: Params) {
       })),
     })),
   }))
+
+  const allZonesForCompliance = structures.flatMap((s) =>
+    s.zones.map((z) => ({
+      id: z.id,
+      label: z.label,
+      scaffoldType: z.scaffoldType,
+      accessType: z.accessType,
+      loadingClass: z.loadingClass,
+      heightM: z.heightM,
+      perimeterM: z.perimeterM,
+      areaM2: z.areaM2,
+    }))
+  )
 
   return (
     <div className="flex flex-col h-full" style={{ background: 'var(--background)' }}>
@@ -91,7 +110,8 @@ export default async function EstimatePage({ params }: Params) {
           </Button>
         </div>
       </div>
-      <div className="flex-1 overflow-auto">
+      <div className="flex-1 overflow-auto p-6 space-y-6">
+        {allZonesForCompliance.length > 0 && <ComplianceSummary zones={allZonesForCompliance} />}
         <EstimateSheet
           jobId={jobId}
           title={`${job.projectNumber} — ${job.title}`}

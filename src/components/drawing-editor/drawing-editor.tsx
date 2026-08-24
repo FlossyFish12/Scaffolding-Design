@@ -49,6 +49,7 @@ export default function DrawingEditor({ drawing, initialZones }: Props) {
   const [selectedZoneId, setSelectedZoneId] = useState<string | null>(null)
   const [draftRect, setDraftRect] = useState<CanvasRect | null>(null)
   const [templates, setTemplates] = useState<TemplateSummary[]>([])
+  const [scaleMetersPer100px, setScaleMetersPer100px] = useState(2.0)
 
   useEffect(() => {
     fetch('/api/templates')
@@ -134,6 +135,16 @@ export default function DrawingEditor({ drawing, initialZones }: Props) {
     if (!res.ok) throw new Error('Failed to generate estimate')
   }
 
+  // Derived footprint dimensions from draft rect × scale (for new zone)
+  const draftDerived = draftRect ? (() => {
+    const scale = scaleMetersPer100px / 100
+    const wM = draftRect.width * scale
+    const hM = draftRect.height * scale
+    const perimeter = Math.round(2 * (wM + hM) * 10) / 10
+    const area = Math.round(wM * hM * 10) / 10
+    return { perimeterM: perimeter, areaM2: area }
+  })() : null
+
   const panelInitialValues: Partial<ZoneFormValues> | undefined = selectedZone
     ? {
         label: selectedZone.label,
@@ -145,7 +156,16 @@ export default function DrawingEditor({ drawing, initialZones }: Props) {
         scaffoldType: selectedZone.scaffoldType,
         templateId: selectedZone.templateId,
       }
-    : undefined
+    : draftDerived ? {
+        label: '',
+        accessType: 'ground',
+        loadingClass: 'light',
+        heightM: 6,
+        perimeterM: draftDerived.perimeterM,
+        areaM2: draftDerived.areaM2,
+        scaffoldType: 'independent',
+        templateId: null,
+      } : undefined
 
   return (
     <div className="flex flex-col h-full">
@@ -158,6 +178,24 @@ export default function DrawingEditor({ drawing, initialZones }: Props) {
           </span>
         </div>
         <div className="flex items-center gap-3">
+          <label className="flex items-center gap-1 text-xs">
+            Scale
+            <input
+              type="number"
+              step="0.1"
+              min="0.1"
+              value={scaleMetersPer100px}
+              onChange={e => setScaleMetersPer100px(parseFloat(e.target.value) || 2.0)}
+              className="w-14 rounded border px-1 py-0.5 text-xs text-right"
+              title="meters per 100px — set from known dimension on PDF"
+            />
+            <span className="text-muted-foreground">m/100px</span>
+          </label>
+          {draftDerived && (
+            <span className="text-xs text-muted-foreground hidden lg:inline">
+              ↳ {draftDerived.perimeterM}m perim · {draftDerived.areaM2}m²
+            </span>
+          )}
           <Button
             render={<Link href={`/jobs/${drawing.jobId}/estimate`} />}
             style={{ fontSize: 12, padding: '2px 10px', background: 'var(--green)', color: '#fff' }}
