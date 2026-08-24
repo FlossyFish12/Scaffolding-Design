@@ -10,6 +10,7 @@ const NAV_ITEMS = [
   { href: "/schedule",  label: "Schedule",  icon: <CalendarIcon />  },
   { href: "/resources", label: "Resources", icon: <UsersIcon />     },
   { href: "/safety",    label: "Safety",    icon: <ShieldIcon />    },
+  { href: "/inventory", label: "Inventory", icon: <BoxesIcon />     },
 ]
 
 function NavItem({ href, label, icon }: { href: string; label: string; icon: React.ReactNode }) {
@@ -131,6 +132,9 @@ function CalcIcon() {
 }
 function ShieldIcon() {
   return <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path d="M12 2l7 4v6c0 5-3.5 9-7 10-3.5-1-7-5-7-10V6l7-4z"/><path d="M9 12l2 2 4-4"/></svg>
+}
+function BoxesIcon() {
+  return <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path d="M12 2l9 4.5-9 4.5-9-4.5 9-4.5z"/><path d="M3 6.5v9l9 4.5 9-4.5v-9"/><path d="M12 11v9"/></svg>
 }
 function HamburgerIcon() {
   return <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>

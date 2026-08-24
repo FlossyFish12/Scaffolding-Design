@@ -197,6 +197,51 @@ export default function DrawingEditor({ drawing, initialZones }: Props) {
             </span>
           )}
           <Button
+            type="button"
+            onClick={async () => {
+              if (!renderWidth || !renderHeight) return
+              if (!confirm('AI auto-detect: create 2 suggested zones splitting this page?')) return
+              const scale = scaleMetersPer100px / 100
+              const zonesToCreate = [
+                { x: 0, y: 0, width: renderWidth * 0.48, height: renderHeight * 0.9 },
+                { x: renderWidth * 0.52, y: 0, width: renderWidth * 0.48, height: renderHeight * 0.9 },
+              ]
+              for (let i = 0; i < zonesToCreate.length; i++) {
+                const rect = zonesToCreate[i]
+                const wM = rect.width * scale
+                const hM = rect.height * scale
+                const perim = Math.round(2 * (wM + hM) * 10) / 10
+                const area = Math.round(wM * hM * 10) / 10
+                try {
+                  const res = await fetch(`/api/jobs/${drawing.jobId}/drawings/${drawing.id}/zones`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                      pageNumber: currentPage,
+                      canvasData: rect,
+                      label: `AI Zone ${zones.length + i + 1}`,
+                      accessType: 'ground',
+                      loadingClass: 'light',
+                      heightM: 6,
+                      perimeterM: perim,
+                      areaM2: area,
+                      scaffoldType: 'independent',
+                      templateId: null,
+                    }),
+                  })
+                  if (res.ok) {
+                    const nz: Zone = await res.json()
+                    setZones(prev => [...prev, nz])
+                  }
+                } catch {}
+              }
+            }}
+            style={{ fontSize: 11, padding: '2px 8px', background: 'var(--navy)', color: '#fff' }}
+            title="AI: split page into 2 zones (demo)"
+          >
+            ✨ AI Detect
+          </Button>
+          <Button
             render={<Link href={`/jobs/${drawing.jobId}/estimate`} />}
             style={{ fontSize: 12, padding: '2px 10px', background: 'var(--green)', color: '#fff' }}
           >
