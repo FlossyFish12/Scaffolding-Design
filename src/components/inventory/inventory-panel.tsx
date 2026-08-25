@@ -1,16 +1,16 @@
 'use client'
 import { useEffect, useState } from 'react'
 
-type StockItem = { id: string; item: string; unit: string; inStock: number; reserved: number; threshold: number }
+type StockItem = { id: string; key: string; item: string; unit: string; inStock: number; reserved: number; threshold: number }
 
 const DEFAULT_STOCK: StockItem[] = [
-  { id: 'tube48', item: 'Tube 48.3mm (6m)', unit: 'No.', inStock: 500, reserved: 120, threshold: 100 },
-  { id: 'board', item: 'Scaffold boards 225mm (3.9m)', unit: 'No.', inStock: 800, reserved: 240, threshold: 200 },
-  { id: 'coupler-rac', item: 'Right-angle coupler', unit: 'No.', inStock: 2000, reserved: 600, threshold: 500 },
-  { id: 'coupler-swivel', item: 'Swivel coupler', unit: 'No.', inStock: 800, reserved: 200, threshold: 150 },
-  { id: 'base', item: 'Base plates', unit: 'No.', inStock: 300, reserved: 60, threshold: 80 },
-  { id: 'sole', item: 'Sole boards', unit: 'No.', inStock: 300, reserved: 60, threshold: 80 },
-  { id: 'tie', item: 'Anchor ties', unit: 'No.', inStock: 400, reserved: 90, threshold: 100 },
+  { id: 'tube48', key: 'tube48', item: 'Tube 48.3mm (6m)', unit: 'No.', inStock: 500, reserved: 120, threshold: 100 },
+  { id: 'board', key: 'board', item: 'Scaffold boards 225mm (3.9m)', unit: 'No.', inStock: 800, reserved: 240, threshold: 200 },
+  { id: 'coupler-rac', key: 'coupler-rac', item: 'Right-angle coupler', unit: 'No.', inStock: 2000, reserved: 600, threshold: 500 },
+  { id: 'coupler-swivel', key: 'coupler-swivel', item: 'Swivel coupler', unit: 'No.', inStock: 800, reserved: 200, threshold: 150 },
+  { id: 'base', key: 'base', item: 'Base plates', unit: 'No.', inStock: 300, reserved: 60, threshold: 80 },
+  { id: 'sole', key: 'sole', item: 'Sole boards', unit: 'No.', inStock: 300, reserved: 60, threshold: 80 },
+  { id: 'tie', key: 'tie', item: 'Anchor ties', unit: 'No.', inStock: 400, reserved: 90, threshold: 100 },
 ]
 
 export default function InventoryPanel() {
@@ -18,19 +18,25 @@ export default function InventoryPanel() {
   const [editing, setEditing] = useState<string | null>(null)
 
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem('scaffold-inventory')
-      if (raw) setStock(JSON.parse(raw))
-    } catch {}
+    let cancelled = false
+    fetch('/api/inventory')
+      .then(r => r.json())
+      .then(data => { if (!cancelled && Array.isArray(data)) setStock(data) })
+      .catch(() => {})
+    return () => { cancelled = true }
   }, [])
-
-  useEffect(() => {
-    localStorage.setItem('scaffold-inventory', JSON.stringify(stock))
-  }, [stock])
 
   function update(id: string, field: 'inStock' | 'reserved', value: number) {
     setStock(prev => prev.map(s => s.id === id ? { ...s, [field]: value } : s))
     setEditing(null)
+    const item = stock.find(s => s.id === id)
+    if (item) {
+      fetch('/api/inventory', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ key: item.key, [field]: value }),
+      }).catch(() => {})
+    }
   }
 
   const lowStock = stock.filter(s => (s.inStock - s.reserved) < s.threshold)

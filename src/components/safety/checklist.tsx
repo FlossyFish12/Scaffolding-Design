@@ -16,10 +16,6 @@ const DEFAULT_ITEMS: Omit<CheckItem, 'checked' | 'notes'>[] = [
   { id: 'insp', label: 'Weekly inspection ≤7 days, after events', clause: 'EN5975 §8' },
 ]
 
-function storageKey(zoneId?: string) {
-  return zoneId ? `safety-checklist-${zoneId}` : 'safety-checklist-global'
-}
-
 export default function SafetyChecklist({ zoneId, title }: { zoneId?: string; title?: string }) {
   const [items, setItems] = useState<CheckItem[]>(() =>
     DEFAULT_ITEMS.map((d) => ({ ...d, checked: false, notes: '' }))
@@ -27,21 +23,34 @@ export default function SafetyChecklist({ zoneId, title }: { zoneId?: string; ti
   const [inspector, setInspector] = useState('')
   const [date, setDate] = useState(() => new Date().toISOString().slice(0, 10))
 
-  // eslint-disable-next-line react-hooks/set-state-in-effect -- hydration from localStorage is intentional
+  // Hydrate from DB (API) — fallback to defaults
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem(storageKey(zoneId))
-      if (raw) {
-        const parsed = JSON.parse(raw)
-        if (Array.isArray(parsed.items)) setItems(parsed.items)
-        if (parsed.inspector) setInspector(parsed.inspector)
-        if (parsed.date) setDate(parsed.date)
-      }
-    } catch {}
+    let cancelled = false
+    fetch(`/api/checklists?scope=${encodeURIComponent(zoneId || 'global')}`)
+      .then(r => r.json())
+      .then(saved => {
+        if (cancelled || !saved) return
+        try {
+          const parsed = typeof saved.items === 'string' ? JSON.parse(saved.items) : saved.items
+          if (Array.isArray(parsed)) setItems(parsed)
+          if (saved.inspector) setInspector(saved.inspector)
+          if (saved.date) setDate(new Date(saved.date).toISOString().slice(0, 10))
+        } catch {}
+      })
+      .catch(() => {})
+    return () => { cancelled = true }
   }, [zoneId])
 
+  // Persist to DB (debounced via effect on change)
   useEffect(() => {
-    localStorage.setItem(storageKey(zoneId), JSON.stringify({ items, inspector, date }))
+    const t = setTimeout(() => {
+      fetch('/api/checklists', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ scope: zoneId || 'global', inspector, date, items: JSON.stringify(items) }),
+      }).catch(() => {})
+    }, 500)
+    return () => clearTimeout(t)
   }, [items, inspector, date, zoneId])
 
   const progress = items.filter((i) => i.checked).length
