@@ -18,14 +18,42 @@ const DEFAULTS = [
   { key: 'tie', item: 'Anchor ties', unit: 'No.', inStock: 400, reserved: 90, threshold: 100 },
 ]
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
     let items = await prisma.inventoryItem.findMany({ orderBy: { key: 'asc' } })
     if (items.length === 0) {
       await prisma.inventoryItem.createMany({ data: DEFAULTS })
       items = await prisma.inventoryItem.findMany({ orderBy: { key: 'asc' } })
     }
-    return NextResponse.json(items)
+
+    // Weekly availability: stock − allocations active in each week (next 12 weeks)
+    const weeksParam = parseInt(new URL(req.url).searchParams.get('weeks') ?? '12')
+    const numWeeks = Math.min(Math.max(weeksParam, 1), 52)
+    const now = new Date()
+    const monday = new Date(now)
+    monday.setHours(0, 0, 0, 0)
+    const dow = monday.getDay()
+    monday.setDate(monday.getDate() + (dow === 0 ? -6 : 1 - dow))
+
+    const weeks: { weekStart: string; available: Record<string, number> }[] = []
+    for (let w = 0; w < numWeeks; w++) {
+      const ws = new Date(monday); ws.setDate(ws.getDate() + w * 7)
+      const we = new Date(ws); we.setDate(we.getDate() + 7)
+      const active = await prisma.allocation.findMany({
+        where: { weekFrom: { lt: we }, weekTo: { gt: ws } },
+      })
+      const committed: Record<string, number> = {}
+      for (const a of active) committed[a.itemKey] = (committed[a.itemKey] ?? 0) + a.qty
+      const available: Record<string, number> = {}
+      for (const it of items) {
+        // tube48 stored in No. of 6m tubes; allocations in lm → convert lm→tubes
+        const qty = it.key === 'tube48' ? (committed[it.key] ?? 0) / 6 : (committed[it.key] ?? 0)
+        available[it.key] = Math.round((it.inStock - it.reserved - qty) * 10) / 10
+      }
+      weeks.push({ weekStart: ws.toISOString().slice(0, 10), available })
+    }
+
+    return NextResponse.json({ items, weeks })
   } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }

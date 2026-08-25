@@ -121,6 +121,37 @@ export async function POST(req: Request, { params }: Params) {
       })
     })
 
+    // ── Material register: allocate MTO items to weeks (erect→dismantle) ──
+    try {
+      const ITEM_KEY_MAP: Array<[RegExp, string]> = [
+        [/standards/i, 'tube48'],
+        [/ledgers/i, 'tube48'],
+        [/transoms/i, 'tube48'],
+        [/brace/i, 'tube48'],
+        [/tube/i, 'tube48'],
+        [/boards?\s*\(225mm\)/i, 'board'],
+        [/sole/i, 'sole'],
+        [/base plate/i, 'base'],
+        [/right-angle/i, 'coupler-rac'],
+        [/swivel/i, 'coupler-swivel'],
+        [/tie/i, 'tie'],
+      ]
+      const drawingRow = await prisma.drawing.findUnique({ where: { id: drawingId }, select: { structureId: true } })
+      const phases = await prisma.phase.findMany({ where: { jobId, structureId: drawingRow?.structureId ?? '' } })
+      const weekFrom = phases.find((ph) => ph.type === 'erect')?.startDate
+        ?? new Date(new Date().toISOString().slice(0, 10))
+      const weekTo = phases.find((ph) => ph.type === 'dismantle')?.endDate
+        ?? new Date(Date.now() + 8 * 7 * 86400000)
+      await prisma.allocation.deleteMany({ where: { zoneId } })
+      const allocs = mtoItems.map((it) => {
+        const match = ITEM_KEY_MAP.find(([re]) => re.test(it.description))
+        return match ? { zoneId, itemKey: match[1], qty: it.quantity, weekFrom, weekTo } : null
+      }).filter((a): a is NonNullable<typeof a> => a !== null)
+      if (allocs.length > 0) await prisma.allocation.createMany({ data: allocs })
+    } catch {
+      // allocation is best-effort
+    }
+
     // ── Phase → Resource re-calc: update manhoursTotal for phases of this structure ──
     try {
       const drawing = await prisma.drawing.findUnique({ where: { id: drawingId }, select: { structureId: true, jobId: true } })

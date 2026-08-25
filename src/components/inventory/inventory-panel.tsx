@@ -17,11 +17,17 @@ export default function InventoryPanel() {
   const [stock, setStock] = useState<StockItem[]>(DEFAULT_STOCK)
   const [editing, setEditing] = useState<string | null>(null)
 
+  const [weeks, setWeeks] = useState<{ weekStart: string; available: Record<string, number> }[]>([])
+
   useEffect(() => {
     let cancelled = false
     fetch('/api/inventory')
       .then(r => r.json())
-      .then(data => { if (!cancelled && Array.isArray(data)) setStock(data) })
+      .then(data => {
+        if (cancelled) return
+        if (Array.isArray(data)) setStock(data)
+        else if (data?.items) { setStock(data.items); setWeeks(data.weeks ?? []) }
+      })
       .catch(() => {})
     return () => { cancelled = true }
   }, [])
@@ -102,7 +108,40 @@ export default function InventoryPanel() {
           </tbody>
         </table>
       </div>
-      <p className="text-xs text-muted-foreground">Click In Stock / Reserved to edit. Available = In Stock − Reserved. Threshold triggers low-stock warning. Data saved locally; integrate with ERP for live stock later.</p>
+      {weeks.length > 0 && (
+        <div className="rounded border bg-card overflow-hidden">
+          <div className="px-4 py-2 border-b bg-muted/20">
+            <h3 className="text-sm font-semibold">Free by week — after scheduled dismantles</h3>
+            <p className="text-xs text-muted-foreground">Available = stock − reserved − allocations active that week (from S-curve schedule)</p>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="bg-muted/10 text-muted-foreground">
+                  <th className="text-left px-3 py-1.5">Item</th>
+                  {weeks.map(w => <th key={w.weekStart} className="text-right px-2 py-1.5">{w.weekStart.slice(5)}</th>)}
+                </tr>
+              </thead>
+              <tbody>
+                {stock.map(sItem => (
+                  <tr key={sItem.id} className="border-t">
+                    <td className="px-3 py-1.5 whitespace-nowrap">{sItem.item}</td>
+                    {weeks.map(w => {
+                      const avail = w.available[sItem.key] ?? 0
+                      return (
+                        <td key={w.weekStart} className={`px-2 py-1.5 text-right ${avail < sItem.threshold ? 'text-red-700 font-medium' : 'text-green-700'}`}>
+                          {avail}
+                        </td>
+                      )
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+      <p className="text-xs text-muted-foreground">Click In Stock / Reserved to edit. Available = In Stock − Reserved − active allocations. Red cells fall below threshold.</p>
     </div>
   )
 }

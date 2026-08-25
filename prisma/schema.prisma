@@ -92,6 +92,7 @@ model Zone {
   drawing       Drawing      @relation(fields: [drawingId], references: [id], onDelete: Cascade)
   template      Template?    @relation(fields: [templateId], references: [id])
   estimateItems EstimateItem[]
+  allocations   Allocation[]
 }
 
 model EstimateItem {
@@ -167,4 +168,15 @@ model User {
   email String @unique
   name  String
   role  String @default("designer")
+}
+
+model Allocation {
+  id        String   @id @default(cuid())
+  zoneId    String
+  itemKey   String
+  qty       Float
+  weekFrom  DateTime
+  weekTo    DateTime
+  createdAt DateTime @default(now())
+  zone      Zone     @relation(fields: [zoneId], references: [id], onDelete: Cascade)
 }
