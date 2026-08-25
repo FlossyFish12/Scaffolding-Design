@@ -47,6 +47,9 @@ export default async function EstimatePage({ params }: Params) {
       heightM: zone.heightM,
       perimeterM: zone.perimeterM,
       areaM2: zone.areaM2,
+      bayLengthM: zone.bayLengthM,
+      liftHeightM: zone.liftHeightM,
+      boards: zone.boards,
       items: zone.estimateItems.map((item) => ({
         id: item.id,
         category: item.category as 'material' | 'labour',
@@ -95,6 +98,9 @@ export default async function EstimatePage({ params }: Params) {
       heightM: z.heightM,
       perimeterM: z.perimeterM,
       areaM2: z.areaM2,
+      bayLengthM: z.bayLengthM,
+      liftHeightM: z.liftHeightM,
+      boards: z.boards,
     }))
   )
 

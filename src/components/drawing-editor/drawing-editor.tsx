@@ -185,7 +185,15 @@ export default function DrawingEditor({ drawing, initialZones }: Props) {
               step="0.1"
               min="0.1"
               value={scaleMetersPer100px}
-              onChange={e => setScaleMetersPer100px(parseFloat(e.target.value) || 2.0)}
+              onChange={e => {
+                const v = parseFloat(e.target.value) || 2.0
+                setScaleMetersPer100px(v)
+                fetch(`/api/jobs/${drawing.jobId}/drawings/${drawing.id}`, {
+                  method: 'PATCH',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ scaleMPer100px: v }),
+                }).catch(() => {})
+              }}
               className="w-14 rounded border px-1 py-0.5 text-xs text-right"
               title="meters per 100px — set from known dimension on PDF"
             />

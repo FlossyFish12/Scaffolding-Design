@@ -67,6 +67,7 @@ model Drawing {
   filename      String
   blobUrl       String
   pageCount     Int      @default(1)
+  scaleMPer100px Float   @default(2.0)
   createdAt     DateTime @default(now())
   job           Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
   zones         Zone[]
@@ -83,6 +84,9 @@ model Zone {
   heightM       Float
   perimeterM    Float
   areaM2        Float
+  bayLengthM    Float     @default(2.1)
+  liftHeightM   Float     @default(2.0)
+  boards        Int       @default(4)
   scaffoldType  ScaffoldType
   templateId    String?
   actualQty     Float?

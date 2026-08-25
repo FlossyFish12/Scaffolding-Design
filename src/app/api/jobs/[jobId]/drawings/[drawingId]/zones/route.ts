@@ -16,6 +16,9 @@ const zoneSchema = z.object({
   heightM: z.number().positive(),
   perimeterM: z.number().positive(),
   areaM2: z.number().positive(),
+  bayLengthM: z.number().positive().default(2.1),
+  liftHeightM: z.number().positive().default(2.0),
+  boards: z.number().int().min(3).max(5).default(4),
   scaffoldType: z.enum(['independent', 'birdcage', 'putlog', 'suspended', 'cantilever']),
   templateId: z.string().nullable().optional(),
 })

@@ -12,6 +12,9 @@ type ZoneForCompliance = {
   heightM: number
   perimeterM: number
   areaM2: number
+  bayLengthM?: number
+  liftHeightM?: number
+  boards?: number
 }
 
 type Props = {
@@ -23,9 +26,9 @@ export default function ComplianceSummary({ zones }: Props) {
     return zones.map((z) => {
       const loadMap: Record<string, number> = { light: 2, medium: 3, heavy: 4 }
       const loadClass = loadMap[z.loadingClass] ?? 2
-      const bay = 2.1
-      const lift = 2.0
-      const boards = 4
+      const bay = z.bayLengthM || 2.1
+      const lift = z.liftHeightM || 2.0
+      const boards = z.boards || 4
       const numBays = Math.max(1, Math.round((z.perimeterM || 10) / bay))
       try {
         const tg20 = runCalc({

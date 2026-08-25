@@ -68,9 +68,9 @@ export async function POST(req: Request, { params }: Params) {
 
     // ── MTO sync: derive MTO from zone dimensions (with 10% waste) ──
     const loadClassMap: Record<string, number> = { light: 2, medium: 3, heavy: 4 }
-    const bayLengthM = 2.1
-    const liftHeightM = 2.0
-    const boards = 4
+    const bayLengthM = zone.bayLengthM || 2.1
+    const liftHeightM = zone.liftHeightM || 2.0
+    const boards = zone.boards || 4
     const numBays = Math.max(1, Math.round((zone.perimeterM || 10) / bayLengthM))
     const mtoParams = {
       height_m: zone.heightM || 6,

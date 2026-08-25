@@ -18,6 +18,22 @@ export async function GET(_req: Request, { params }: Params) {
   }
 }
 
+export async function PATCH(req: Request, { params }: Params) {
+  try {
+    const { drawingId } = await params
+    const body = await req.json()
+    const scale = parseFloat(body?.scaleMPer100px)
+    if (!Number.isFinite(scale) || scale <= 0) {
+      return NextResponse.json({ error: 'scaleMPer100px must be a positive number' }, { status: 400 })
+    }
+    const drawing = await prisma.drawing.update({ where: { id: drawingId }, data: { scaleMPer100px: scale } })
+    return NextResponse.json(drawing)
+  } catch (e) {
+    if ((e as { code?: string })?.code === 'P2025') return NextResponse.json({ error: 'Not found' }, { status: 404 })
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+  }
+}
+
 export async function DELETE(_req: Request, { params }: Params) {
   try {
     const { drawingId } = await params
