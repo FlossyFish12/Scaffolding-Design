@@ -16,8 +16,8 @@ const schema = z.object({
     .min(1, 'Load class must be 1–6')
     .max(6, 'Load class must be 1–6'),
   wind_zone: z.number().int()
-    .min(1, 'Wind zone must be 1–4')
-    .max(4, 'Wind zone must be 1–4'),
+    .min(1, 'Site exposure must be 1–4')
+    .max(4, 'Site exposure must be 1–4'),
   tie_pattern: z.enum(['alternate', 'every_lift', 'every_bay']),
   ground_bearing_kpa: z.number().positive().default(50),
   job_ref: z.string().optional(),

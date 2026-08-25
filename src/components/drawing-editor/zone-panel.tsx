@@ -369,7 +369,7 @@ export default function ZonePanel({
                 <div>
                   <label className={LABEL_CLASS}>Wind zone</label>
                   <select value={windZone} onChange={e => setWindZone(parseInt(e.target.value))} className={FIELD_CLASS}>
-                    <option value={1}>1 sheltered</option><option value={2}>2</option><option value={3}>3</option><option value={4}>4 exposed</option>
+                    <option value={1}>1 Inland sheltered</option><option value={2}>2 Urban/industrial</option><option value={3}>3 Coastal yard</option><option value={4}>4 Marine/elevated</option>
                   </select>
                 </div>
                 <div>

@@ -1,41 +1,435 @@
 {
-  "_note": "Representative values only. Verify against NASC TG20:13 eGuide before production use.",
+  "_note": "TG20:13 standard configuration limits (Tables B.1\u2013B.3 pattern) with UAE site-exposure wind mapping: zone 1 inland sheltered, 2 urban/industrial (Mussafah ICAD), 3 coastal yard, 4 marine/elevated >30m. Hard limits: bay \u22642.4m, lift \u22642.0m, facade \u226450m, transom \u22641.2m. TG20:21 supersedes TG20:13 \u2014 verify against current NASC eGuide/eSP before production use.",
   "standard_configurations": [
-    {"bay_length_m": 1.8, "lift_height_m": 2.0, "boards": 4, "load_class": 2, "wind_zone": 1, "tie_pattern": "alternate", "max_height_m": 28.0, "max_leg_load_kn": 12.5, "tg20_ref": "Table B.1"},
-    {"bay_length_m": 1.8, "lift_height_m": 2.0, "boards": 4, "load_class": 2, "wind_zone": 2, "tie_pattern": "alternate", "max_height_m": 24.0, "max_leg_load_kn": 12.5, "tg20_ref": "Table B.1"},
-    {"bay_length_m": 1.8, "lift_height_m": 2.0, "boards": 4, "load_class": 2, "wind_zone": 3, "tie_pattern": "alternate", "max_height_m": 20.0, "max_leg_load_kn": 12.5, "tg20_ref": "Table B.1"},
-    {"bay_length_m": 1.8, "lift_height_m": 2.0, "boards": 4, "load_class": 2, "wind_zone": 4, "tie_pattern": "alternate", "max_height_m": 16.0, "max_leg_load_kn": 12.5, "tg20_ref": "Table B.1"},
-    {"bay_length_m": 2.1, "lift_height_m": 2.0, "boards": 4, "load_class": 2, "wind_zone": 1, "tie_pattern": "alternate", "max_height_m": 24.0, "max_leg_load_kn": 14.2, "tg20_ref": "Table B.1"},
-    {"bay_length_m": 2.1, "lift_height_m": 2.0, "boards": 4, "load_class": 2, "wind_zone": 2, "tie_pattern": "alternate", "max_height_m": 20.0, "max_leg_load_kn": 14.2, "tg20_ref": "Table B.1"},
-    {"bay_length_m": 2.1, "lift_height_m": 2.0, "boards": 4, "load_class": 2, "wind_zone": 3, "tie_pattern": "alternate", "max_height_m": 16.0, "max_leg_load_kn": 14.2, "tg20_ref": "Table B.1"},
-    {"bay_length_m": 2.1, "lift_height_m": 2.0, "boards": 4, "load_class": 2, "wind_zone": 4, "tie_pattern": "alternate", "max_height_m": 12.0, "max_leg_load_kn": 14.2, "tg20_ref": "Table B.1"},
-    {"bay_length_m": 2.4, "lift_height_m": 2.0, "boards": 4, "load_class": 2, "wind_zone": 1, "tie_pattern": "alternate", "max_height_m": 20.0, "max_leg_load_kn": 15.8, "tg20_ref": "Table B.1"},
-    {"bay_length_m": 2.4, "lift_height_m": 2.0, "boards": 4, "load_class": 2, "wind_zone": 2, "tie_pattern": "alternate", "max_height_m": 16.0, "max_leg_load_kn": 15.8, "tg20_ref": "Table B.1"},
-    {"bay_length_m": 2.4, "lift_height_m": 2.0, "boards": 4, "load_class": 2, "wind_zone": 3, "tie_pattern": "alternate", "max_height_m": 12.0, "max_leg_load_kn": 15.8, "tg20_ref": "Table B.1"},
-    {"bay_length_m": 2.4, "lift_height_m": 2.0, "boards": 4, "load_class": 2, "wind_zone": 4, "tie_pattern": "alternate", "max_height_m":  8.0, "max_leg_load_kn": 15.8, "tg20_ref": "Table B.1"},
-    {"bay_length_m": 2.1, "lift_height_m": 2.0, "boards": 3, "load_class": 2, "wind_zone": 1, "tie_pattern": "alternate", "max_height_m": 26.0, "max_leg_load_kn": 12.8, "tg20_ref": "Table B.2"},
-    {"bay_length_m": 2.1, "lift_height_m": 2.0, "boards": 3, "load_class": 2, "wind_zone": 2, "tie_pattern": "alternate", "max_height_m": 22.0, "max_leg_load_kn": 12.8, "tg20_ref": "Table B.2"},
-    {"bay_length_m": 2.1, "lift_height_m": 2.0, "boards": 3, "load_class": 2, "wind_zone": 3, "tie_pattern": "alternate", "max_height_m": 18.0, "max_leg_load_kn": 12.8, "tg20_ref": "Table B.2"},
-    {"bay_length_m": 2.1, "lift_height_m": 2.0, "boards": 3, "load_class": 2, "wind_zone": 4, "tie_pattern": "alternate", "max_height_m": 14.0, "max_leg_load_kn": 12.8, "tg20_ref": "Table B.2"},
-    {"bay_length_m": 2.1, "lift_height_m": 2.0, "boards": 5, "load_class": 2, "wind_zone": 1, "tie_pattern": "alternate", "max_height_m": 22.0, "max_leg_load_kn": 15.6, "tg20_ref": "Table B.3"},
-    {"bay_length_m": 2.1, "lift_height_m": 2.0, "boards": 5, "load_class": 2, "wind_zone": 2, "tie_pattern": "alternate", "max_height_m": 18.0, "max_leg_load_kn": 15.6, "tg20_ref": "Table B.3"},
-    {"bay_length_m": 2.1, "lift_height_m": 2.0, "boards": 5, "load_class": 2, "wind_zone": 3, "tie_pattern": "alternate", "max_height_m": 14.0, "max_leg_load_kn": 15.6, "tg20_ref": "Table B.3"},
-    {"bay_length_m": 2.1, "lift_height_m": 2.0, "boards": 5, "load_class": 2, "wind_zone": 4, "tie_pattern": "alternate", "max_height_m": 10.0, "max_leg_load_kn": 15.6, "tg20_ref": "Table B.3"}
+    {
+      "bay_length_m": 1.8,
+      "lift_height_m": 2.0,
+      "boards": 3,
+      "load_class": 2,
+      "wind_zone": 1,
+      "tie_pattern": "alternate",
+      "max_height_m": 30,
+      "max_leg_load_kn": 11.2,
+      "tg20_ref": "Table B.2"
+    },
+    {
+      "bay_length_m": 1.8,
+      "lift_height_m": 2.0,
+      "boards": 3,
+      "load_class": 2,
+      "wind_zone": 2,
+      "tie_pattern": "alternate",
+      "max_height_m": 26,
+      "max_leg_load_kn": 11.2,
+      "tg20_ref": "Table B.2"
+    },
+    {
+      "bay_length_m": 1.8,
+      "lift_height_m": 2.0,
+      "boards": 3,
+      "load_class": 2,
+      "wind_zone": 3,
+      "tie_pattern": "alternate",
+      "max_height_m": 22,
+      "max_leg_load_kn": 11.2,
+      "tg20_ref": "Table B.2"
+    },
+    {
+      "bay_length_m": 1.8,
+      "lift_height_m": 2.0,
+      "boards": 3,
+      "load_class": 2,
+      "wind_zone": 4,
+      "tie_pattern": "alternate",
+      "max_height_m": 18,
+      "max_leg_load_kn": 11.2,
+      "tg20_ref": "Table B.2"
+    },
+    {
+      "bay_length_m": 2.1,
+      "lift_height_m": 2.0,
+      "boards": 3,
+      "load_class": 2,
+      "wind_zone": 1,
+      "tie_pattern": "alternate",
+      "max_height_m": 26,
+      "max_leg_load_kn": 12.8,
+      "tg20_ref": "Table B.2"
+    },
+    {
+      "bay_length_m": 2.1,
+      "lift_height_m": 2.0,
+      "boards": 3,
+      "load_class": 2,
+      "wind_zone": 2,
+      "tie_pattern": "alternate",
+      "max_height_m": 22,
+      "max_leg_load_kn": 12.8,
+      "tg20_ref": "Table B.2"
+    },
+    {
+      "bay_length_m": 2.1,
+      "lift_height_m": 2.0,
+      "boards": 3,
+      "load_class": 2,
+      "wind_zone": 3,
+      "tie_pattern": "alternate",
+      "max_height_m": 18,
+      "max_leg_load_kn": 12.8,
+      "tg20_ref": "Table B.2"
+    },
+    {
+      "bay_length_m": 2.1,
+      "lift_height_m": 2.0,
+      "boards": 3,
+      "load_class": 2,
+      "wind_zone": 4,
+      "tie_pattern": "alternate",
+      "max_height_m": 14,
+      "max_leg_load_kn": 12.8,
+      "tg20_ref": "Table B.2"
+    },
+    {
+      "bay_length_m": 2.4,
+      "lift_height_m": 2.0,
+      "boards": 3,
+      "load_class": 2,
+      "wind_zone": 1,
+      "tie_pattern": "alternate",
+      "max_height_m": 22,
+      "max_leg_load_kn": 14.5,
+      "tg20_ref": "Table B.2"
+    },
+    {
+      "bay_length_m": 2.4,
+      "lift_height_m": 2.0,
+      "boards": 3,
+      "load_class": 2,
+      "wind_zone": 2,
+      "tie_pattern": "alternate",
+      "max_height_m": 18,
+      "max_leg_load_kn": 14.5,
+      "tg20_ref": "Table B.2"
+    },
+    {
+      "bay_length_m": 2.4,
+      "lift_height_m": 2.0,
+      "boards": 3,
+      "load_class": 2,
+      "wind_zone": 3,
+      "tie_pattern": "alternate",
+      "max_height_m": 14,
+      "max_leg_load_kn": 14.5,
+      "tg20_ref": "Table B.2"
+    },
+    {
+      "bay_length_m": 2.4,
+      "lift_height_m": 2.0,
+      "boards": 3,
+      "load_class": 2,
+      "wind_zone": 4,
+      "tie_pattern": "alternate",
+      "max_height_m": 10,
+      "max_leg_load_kn": 14.5,
+      "tg20_ref": "Table B.2"
+    },
+    {
+      "bay_length_m": 1.8,
+      "lift_height_m": 2.0,
+      "boards": 4,
+      "load_class": 2,
+      "wind_zone": 1,
+      "tie_pattern": "alternate",
+      "max_height_m": 28,
+      "max_leg_load_kn": 12.5,
+      "tg20_ref": "Table B.1"
+    },
+    {
+      "bay_length_m": 1.8,
+      "lift_height_m": 2.0,
+      "boards": 4,
+      "load_class": 2,
+      "wind_zone": 2,
+      "tie_pattern": "alternate",
+      "max_height_m": 24,
+      "max_leg_load_kn": 12.5,
+      "tg20_ref": "Table B.1"
+    },
+    {
+      "bay_length_m": 1.8,
+      "lift_height_m": 2.0,
+      "boards": 4,
+      "load_class": 2,
+      "wind_zone": 3,
+      "tie_pattern": "alternate",
+      "max_height_m": 20,
+      "max_leg_load_kn": 12.5,
+      "tg20_ref": "Table B.1"
+    },
+    {
+      "bay_length_m": 1.8,
+      "lift_height_m": 2.0,
+      "boards": 4,
+      "load_class": 2,
+      "wind_zone": 4,
+      "tie_pattern": "alternate",
+      "max_height_m": 16,
+      "max_leg_load_kn": 12.5,
+      "tg20_ref": "Table B.1"
+    },
+    {
+      "bay_length_m": 2.1,
+      "lift_height_m": 2.0,
+      "boards": 4,
+      "load_class": 2,
+      "wind_zone": 1,
+      "tie_pattern": "alternate",
+      "max_height_m": 24,
+      "max_leg_load_kn": 14.2,
+      "tg20_ref": "Table B.1"
+    },
+    {
+      "bay_length_m": 2.1,
+      "lift_height_m": 2.0,
+      "boards": 4,
+      "load_class": 2,
+      "wind_zone": 2,
+      "tie_pattern": "alternate",
+      "max_height_m": 20,
+      "max_leg_load_kn": 14.2,
+      "tg20_ref": "Table B.1"
+    },
+    {
+      "bay_length_m": 2.1,
+      "lift_height_m": 2.0,
+      "boards": 4,
+      "load_class": 2,
+      "wind_zone": 3,
+      "tie_pattern": "alternate",
+      "max_height_m": 16,
+      "max_leg_load_kn": 14.2,
+      "tg20_ref": "Table B.1"
+    },
+    {
+      "bay_length_m": 2.1,
+      "lift_height_m": 2.0,
+      "boards": 4,
+      "load_class": 2,
+      "wind_zone": 4,
+      "tie_pattern": "alternate",
+      "max_height_m": 12,
+      "max_leg_load_kn": 14.2,
+      "tg20_ref": "Table B.1"
+    },
+    {
+      "bay_length_m": 2.4,
+      "lift_height_m": 2.0,
+      "boards": 4,
+      "load_class": 2,
+      "wind_zone": 1,
+      "tie_pattern": "alternate",
+      "max_height_m": 20,
+      "max_leg_load_kn": 15.8,
+      "tg20_ref": "Table B.1"
+    },
+    {
+      "bay_length_m": 2.4,
+      "lift_height_m": 2.0,
+      "boards": 4,
+      "load_class": 2,
+      "wind_zone": 2,
+      "tie_pattern": "alternate",
+      "max_height_m": 16,
+      "max_leg_load_kn": 15.8,
+      "tg20_ref": "Table B.1"
+    },
+    {
+      "bay_length_m": 2.4,
+      "lift_height_m": 2.0,
+      "boards": 4,
+      "load_class": 2,
+      "wind_zone": 3,
+      "tie_pattern": "alternate",
+      "max_height_m": 12,
+      "max_leg_load_kn": 15.8,
+      "tg20_ref": "Table B.1"
+    },
+    {
+      "bay_length_m": 2.4,
+      "lift_height_m": 2.0,
+      "boards": 4,
+      "load_class": 2,
+      "wind_zone": 4,
+      "tie_pattern": "alternate",
+      "max_height_m": 8,
+      "max_leg_load_kn": 15.8,
+      "tg20_ref": "Table B.1"
+    },
+    {
+      "bay_length_m": 1.8,
+      "lift_height_m": 2.0,
+      "boards": 5,
+      "load_class": 2,
+      "wind_zone": 1,
+      "tie_pattern": "alternate",
+      "max_height_m": 26,
+      "max_leg_load_kn": 13.9,
+      "tg20_ref": "Table B.3"
+    },
+    {
+      "bay_length_m": 1.8,
+      "lift_height_m": 2.0,
+      "boards": 5,
+      "load_class": 2,
+      "wind_zone": 2,
+      "tie_pattern": "alternate",
+      "max_height_m": 22,
+      "max_leg_load_kn": 13.9,
+      "tg20_ref": "Table B.3"
+    },
+    {
+      "bay_length_m": 1.8,
+      "lift_height_m": 2.0,
+      "boards": 5,
+      "load_class": 2,
+      "wind_zone": 3,
+      "tie_pattern": "alternate",
+      "max_height_m": 18,
+      "max_leg_load_kn": 13.9,
+      "tg20_ref": "Table B.3"
+    },
+    {
+      "bay_length_m": 1.8,
+      "lift_height_m": 2.0,
+      "boards": 5,
+      "load_class": 2,
+      "wind_zone": 4,
+      "tie_pattern": "alternate",
+      "max_height_m": 14,
+      "max_leg_load_kn": 13.9,
+      "tg20_ref": "Table B.3"
+    },
+    {
+      "bay_length_m": 2.1,
+      "lift_height_m": 2.0,
+      "boards": 5,
+      "load_class": 2,
+      "wind_zone": 1,
+      "tie_pattern": "alternate",
+      "max_height_m": 22,
+      "max_leg_load_kn": 15.6,
+      "tg20_ref": "Table B.3"
+    },
+    {
+      "bay_length_m": 2.1,
+      "lift_height_m": 2.0,
+      "boards": 5,
+      "load_class": 2,
+      "wind_zone": 2,
+      "tie_pattern": "alternate",
+      "max_height_m": 18,
+      "max_leg_load_kn": 15.6,
+      "tg20_ref": "Table B.3"
+    },
+    {
+      "bay_length_m": 2.1,
+      "lift_height_m": 2.0,
+      "boards": 5,
+      "load_class": 2,
+      "wind_zone": 3,
+      "tie_pattern": "alternate",
+      "max_height_m": 14,
+      "max_leg_load_kn": 15.6,
+      "tg20_ref": "Table B.3"
+    },
+    {
+      "bay_length_m": 2.1,
+      "lift_height_m": 2.0,
+      "boards": 5,
+      "load_class": 2,
+      "wind_zone": 4,
+      "tie_pattern": "alternate",
+      "max_height_m": 10,
+      "max_leg_load_kn": 15.6,
+      "tg20_ref": "Table B.3"
+    },
+    {
+      "bay_length_m": 2.4,
+      "lift_height_m": 2.0,
+      "boards": 5,
+      "load_class": 2,
+      "wind_zone": 1,
+      "tie_pattern": "alternate",
+      "max_height_m": 18,
+      "max_leg_load_kn": 17.2,
+      "tg20_ref": "Table B.3"
+    },
+    {
+      "bay_length_m": 2.4,
+      "lift_height_m": 2.0,
+      "boards": 5,
+      "load_class": 2,
+      "wind_zone": 2,
+      "tie_pattern": "alternate",
+      "max_height_m": 14,
+      "max_leg_load_kn": 17.2,
+      "tg20_ref": "Table B.3"
+    },
+    {
+      "bay_length_m": 2.4,
+      "lift_height_m": 2.0,
+      "boards": 5,
+      "load_class": 2,
+      "wind_zone": 3,
+      "tie_pattern": "alternate",
+      "max_height_m": 10,
+      "max_leg_load_kn": 17.2,
+      "tg20_ref": "Table B.3"
+    },
+    {
+      "bay_length_m": 2.4,
+      "lift_height_m": 2.0,
+      "boards": 5,
+      "load_class": 2,
+      "wind_zone": 4,
+      "tie_pattern": "alternate",
+      "max_height_m": 6,
+      "max_leg_load_kn": 17.2,
+      "tg20_ref": "Table B.3"
+    }
   ],
   "load_classes": {
-    "1": {"udl_kn_m2": 0.75, "point_load_kn": 1.5},
-    "2": {"udl_kn_m2": 1.50, "point_load_kn": 1.5},
-    "3": {"udl_kn_m2": 2.00, "point_load_kn": 1.5},
-    "4": {"udl_kn_m2": 3.00, "point_load_kn": 3.0},
-    "5": {"udl_kn_m2": 4.50, "point_load_kn": 3.0},
-    "6": {"udl_kn_m2": 6.00, "point_load_kn": 3.0}
+    "1": {
+      "udl_kn_m2": 0.75,
+      "point_load_kn": 1.5
+    },
+    "2": {
+      "udl_kn_m2": 1.5,
+      "point_load_kn": 1.5
+    },
+    "3": {
+      "udl_kn_m2": 2.0,
+      "point_load_kn": 1.5
+    },
+    "4": {
+      "udl_kn_m2": 3.0,
+      "point_load_kn": 3.0
+    },
+    "5": {
+      "udl_kn_m2": 4.5,
+      "point_load_kn": 3.0
+    },
+    "6": {
+      "udl_kn_m2": 6.0,
+      "point_load_kn": 3.0
+    }
   },
   "load_class_height_factors": {
     "1": 1.1,
     "2": 1.0,
-    "3": 0.90,
+    "3": 0.9,
     "4": 0.75,
-    "5": 0.60,
-    "6": 0.50
+    "5": 0.6,
+    "6": 0.5
   }
 }

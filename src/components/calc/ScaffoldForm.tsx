@@ -37,7 +37,7 @@ const HELP_TEXT: Record<keyof FormState, string> = {
   boards: 'Number of boards wide (3 = light access, 5 = full-width working platform)',
   num_bays: 'Total number of scaffold bays along the structure',
   load_class: 'TG20 load class 1–6 (class 2 = 1.5 kN/m², class 3 = 2.0 kN/m²)',
-  wind_zone: 'UK wind zone 1–4 (1 = sheltered, 4 = severe exposed)',
+  wind_zone: 'UAE site exposure — 1 Inland sheltered · 2 Urban/industrial (Mussafah ICAD) · 3 Coastal yard · 4 Marine/elevated',
   tie_pattern: 'How frequently the scaffold is tied back to the structure',
   ground_bearing_kpa: 'Bearing capacity of ground under base plates (default 50 kPa)',
 }
@@ -196,7 +196,23 @@ export function ScaffoldForm({ onSubmit, isLoading }: ScaffoldFormProps) {
         <p className="text-xs font-semibold uppercase tracking-widest text-slate-500 mb-3">Loads & Exposure</p>
         <div className="grid grid-cols-2 gap-3">
           {field('load_class', 'Load class (1–6)', 'e.g. 2')}
-          {field('wind_zone', 'Wind zone (1–4)', 'e.g. 2')}
+          <div>
+            <label className="block text-xs font-medium text-slate-400 mb-0.5">Site exposure</label>
+            <p className="text-xs text-slate-500 mb-1">{HELP_TEXT.wind_zone}</p>
+            <select
+              name="wind_zone"
+              value={form.wind_zone}
+              onChange={handleChange}
+              className={`w-full rounded bg-slate-800 border px-3 py-2 text-sm text-slate-100 focus:outline-none focus:ring-1 focus:ring-blue-500 ${fieldErrors.wind_zone ? 'border-red-500' : 'border-slate-600'}`}
+            >
+              <option value="">Select…</option>
+              <option value="1">1 — Inland sheltered (Al Ain, inland KSA)</option>
+              <option value="2">2 — Urban/industrial (Mussafah, ICAD)</option>
+              <option value="3">3 — Coastal yard (NMDC waterfront)</option>
+              <option value="4">4 — Marine / elevated &gt;30m</option>
+            </select>
+            {fieldErrors.wind_zone && <p className="mt-1 text-xs text-red-400">{fieldErrors.wind_zone}</p>}
+          </div>
           {field('ground_bearing_kpa', 'Ground bearing (kPa)', 'default 50')}
           <div>
             <label className="block text-xs font-medium text-slate-400 mb-0.5">Tie pattern</label>

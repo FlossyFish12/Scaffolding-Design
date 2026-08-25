@@ -36,7 +36,7 @@ describe('validate', () => {
   test('invalid wind zone gives error', () => {
     const { params, errors } = validate(p({ wind_zone: 5 }))
     expect(params).toBeNull()
-    expect(errors.some(e => e.toLowerCase().includes('wind zone'))).toBe(true)
+    expect(errors.some(e => e.toLowerCase().includes('site exposure'))).toBe(true)
   })
 
   test('invalid boards gives error', () => {
