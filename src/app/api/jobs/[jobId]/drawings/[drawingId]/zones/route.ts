@@ -52,7 +52,8 @@ export async function POST(request: Request, { params }: Params) {
     if (!result.success) return NextResponse.json({ error: result.error.flatten() }, { status: 400 })
     const zone = await prisma.zone.create({ data: { drawingId, ...result.data } })
     return NextResponse.json(zone, { status: 201 })
-  } catch {
+  } catch (e) {
+    console.error('[zones POST]', e)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
