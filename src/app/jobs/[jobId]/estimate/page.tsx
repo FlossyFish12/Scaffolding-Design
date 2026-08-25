@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation'
 import { prisma } from '@/lib/db'
 import EstimateSheet from '@/components/estimate/estimate-sheet'
 import ComplianceSummary from '@/components/estimate/compliance-summary'
+import ActualsForm from '@/components/estimate/actuals-form'
 import { Button } from '@/components/ui/button'
 
 type Params = { params: Promise<{ jobId: string }> }
@@ -61,6 +62,29 @@ export default async function EstimatePage({ params }: Params) {
     })),
   }))
 
+  const jobPhases = await prisma.phase.findMany({ where: { jobId } })
+  const actualsRows = job.drawings.flatMap((drawing) =>
+    drawing.zones.map((zone) => {
+      const tubeQty = zone.estimateItems
+        .filter((i) => i.category === 'material' && (i.unit === 'lm' || i.description.toLowerCase().includes('tube')))
+        .reduce((sum, i) => sum + i.quantity, 0)
+      const phasesForStructure = jobPhases.filter((ph) => ph.structureId === drawing.structureId)
+      const plannedStart = phasesForStructure.find((ph) => ph.type === 'erect')?.startDate ?? job.startDate
+      const plannedEnd = phasesForStructure.find((ph) => ph.type === 'dismantle')?.endDate ?? new Date(new Date(job.startDate).getTime() + job.durationWeeks * 7 * 86400000)
+      return {
+        zoneId: `${drawing.id}:${zone.id}`,
+        label: zone.label,
+        structureName: drawing.structureName,
+        estimatedQty: Math.round(tubeQty * 10) / 10,
+        actualQty: zone.actualQty,
+        plannedStart: new Date(plannedStart).toISOString(),
+        plannedEnd: new Date(plannedEnd).toISOString(),
+        actualStart: zone.actualStart ? zone.actualStart.toISOString().slice(0, 10) : null,
+        actualEnd: zone.actualEnd ? zone.actualEnd.toISOString().slice(0, 10) : null,
+      }
+    })
+  )
+
   const allZonesForCompliance = structures.flatMap((s) =>
     s.zones.map((z) => ({
       id: z.id,
@@ -112,6 +136,7 @@ export default async function EstimatePage({ params }: Params) {
       </div>
       <div className="flex-1 overflow-auto p-6 space-y-6">
         {allZonesForCompliance.length > 0 && <ComplianceSummary zones={allZonesForCompliance} />}
+        {actualsRows.length > 0 && <ActualsForm zones={actualsRows} jobId={jobId} />}
         <EstimateSheet
           jobId={jobId}
           title={`${job.projectNumber} — ${job.title}`}

@@ -18,6 +18,9 @@ const patchSchema = z.object({
   areaM2: z.number().positive().optional(),
   scaffoldType: z.enum(['independent', 'birdcage', 'putlog', 'suspended', 'cantilever']).optional(),
   templateId: z.string().nullable().optional(),
+  actualQty: z.number().positive().nullable().optional(),
+  actualStart: z.string().datetime().nullable().optional(),
+  actualEnd: z.string().datetime().nullable().optional(),
 })
 
 type Params = { params: Promise<{ jobId: string; drawingId: string; zoneId: string }> }
@@ -44,8 +47,13 @@ export async function PATCH(request: Request, { params }: Params) {
     }
     const result = patchSchema.safeParse(body)
     if (!result.success) return NextResponse.json({ error: result.error.flatten() }, { status: 400 })
+    const data = {
+      ...result.data,
+      ...(result.data.actualStart !== undefined ? { actualStart: result.data.actualStart ? new Date(result.data.actualStart) : null } : {}),
+      ...(result.data.actualEnd !== undefined ? { actualEnd: result.data.actualEnd ? new Date(result.data.actualEnd) : null } : {}),
+    }
     try {
-      const zone = await prisma.zone.update({ where: { id: zoneId }, data: result.data })
+      const zone = await prisma.zone.update({ where: { id: zoneId }, data })
       return NextResponse.json(zone)
     } catch (e) {
       if ((e as { code?: string })?.code === 'P2025') return NextResponse.json({ error: 'Not found' }, { status: 404 })
