@@ -27,6 +27,7 @@ export default function SafetyChecklist({ zoneId, title }: { zoneId?: string; ti
   const [inspector, setInspector] = useState('')
   const [date, setDate] = useState(() => new Date().toISOString().slice(0, 10))
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- hydration from localStorage is intentional
   useEffect(() => {
     try {
       const raw = localStorage.getItem(storageKey(zoneId))
