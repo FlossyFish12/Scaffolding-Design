@@ -4,7 +4,7 @@ import path from 'path'
 
 const BLOB_DIR = path.join(process.cwd(), 'public', 'blob')
 
-export async function putLocal(key: string, file: File): Promise<{ url: string }> {
+export async function putLocal(key: string, file: File, _opts?: unknown): Promise<{ url: string }> {
   const dest = path.join(BLOB_DIR, key)
   await mkdir(path.dirname(dest), { recursive: true })
   const buf = Buffer.from(await file.arrayBuffer())

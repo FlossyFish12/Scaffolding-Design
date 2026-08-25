@@ -1,10 +1,12 @@
 import { prisma } from '@/lib/db'
 import GanttChart, { type GanttJob, type PhaseRow, type StructureRow } from '@/components/schedule/gantt-chart'
+import MaterialSCurve from '@/components/schedule/material-s-curve'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 
 export default async function SchedulePage() {
   let ganttJobs: GanttJob[] = []
+  let sCurveZones: { zoneId: string; label: string; structureId: string; quantityTubeM: number; erectStart: string; dismantleEnd: string }[] = []
   try {
     const jobs = await prisma.job.findMany({
       include: {
@@ -12,7 +14,7 @@ export default async function SchedulePage() {
           include: {
             zones: {
               include: {
-                estimateItems: { where: { category: 'labour' } },
+                estimateItems: true,
               },
             },
           },
@@ -56,9 +58,33 @@ export default async function SchedulePage() {
         structures,
       }
     })
+
+    // Build S-curve zones: tube meters per zone, erect→dismantle window
+    sCurveZones = jobs.flatMap(job =>
+      job.drawings.flatMap(drawing => {
+        const phasesForStructure = job.phases.filter(p => p.structureId === drawing.structureId)
+        const erectStart = phasesForStructure.find(p => p.type === 'erect')?.startDate ?? job.startDate
+        const dismantleEnd = phasesForStructure.find(p => p.type === 'dismantle')?.endDate ?? new Date(new Date(job.startDate).getTime() + job.durationWeeks * 7 * 86400000)
+        return drawing.zones.map(zone => {
+          const tubeQty = zone.estimateItems
+            .filter(i => i.category === 'material' && (i.unit === 'lm' || i.description.toLowerCase().includes('tube')))
+            .reduce((sum, i) => sum + i.quantity, 0)
+          const qty = tubeQty > 0 ? tubeQty : zone.estimateItems.filter(i => i.category === 'material').reduce((s,i)=>s+i.quantity,0) / 3 // fallback
+          return {
+            zoneId: zone.id,
+            label: `${drawing.structureName} — ${zone.label}`,
+            structureId: drawing.structureId,
+            quantityTubeM: Math.round(qty * 10) / 10,
+            erectStart: new Date(erectStart).toISOString(),
+            dismantleEnd: new Date(dismantleEnd).toISOString(),
+          }
+        })
+      })
+    ).filter(z => z.quantityTubeM > 0)
   } catch (e) {
     console.error('[SchedulePage] failed to load data:', e)
     ganttJobs = []
+    sCurveZones = []
   }
 
   return (
@@ -82,8 +108,15 @@ export default async function SchedulePage() {
           </Button>
         </div>
       </div>
-      <div className="flex-1 overflow-auto">
+      <div className="flex-1 overflow-auto p-6 space-y-6">
         <GanttChart jobs={ganttJobs} />
+        {sCurveZones.length > 0 ? (
+          <MaterialSCurve zones={sCurveZones} />
+        ) : (
+          <div className="text-xs text-muted-foreground border rounded p-3">
+            No material for S-curve yet — create zones and generate estimates (tube meters) to see when material frees.
+          </div>
+        )}
       </div>
     </div>
   )
